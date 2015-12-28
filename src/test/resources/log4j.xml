@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE log4j:configuration SYSTEM "./log4j.dtd">
+
+<log4j:configuration>
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d] %6p - %30.30c - %m %n"/>
+        </layout>
+    </appender>
+
+    <root>
+        <priority value="DEBUG"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</log4j:configuration>

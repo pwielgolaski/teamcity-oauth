@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.rodm:gradle-teamcity-plugin:0.8.1"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.rodm.teamcity-server'
+
+group 'me.wielgolaski'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+dependencies {
+    // mandatory dependencies for using Spock
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.1'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'org.springframework:spring-test:4.0.9.RELEASE'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1' // TODO check this duplicates
+    server 'com.googlecode.json-simple:json-simple:1.1.1'
+}
+
+ext {
+    teamcityVersion = '9.1.4'
+    teamcityDir = "$rootDir/servers/TeamCity-${teamcityVersion}"
+    teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
+    teamcityJavaHome = System.properties['java.home']
+}
+
+teamcity {
+    version = teamcityVersion
+
+    descriptor {
+        name = project.name
+        displayName = project.name
+        version = project.version
+        vendorName = 'wielgolaski.me'
+        description = 'TeamCity oAuth authentication Plugin'
+        downloadUrl = 'https://github.com/pwielgolaski/teamcity-oauth/'
+        email = 'pwielgolaski@gmail.com'
+    }
+
+    homeDir = file(teamcityDir)
+    dataDir = file(teamcityDataDir)
+    javaHome = file(teamcityJavaHome)
+}
