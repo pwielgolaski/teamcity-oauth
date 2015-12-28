@@ -10,6 +10,7 @@ buildscript {
 }
 
 apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'com.github.rodm.teamcity-server'
 
 group 'me.wielgolaski'
