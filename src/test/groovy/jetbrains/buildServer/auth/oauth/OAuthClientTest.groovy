@@ -57,6 +57,7 @@ class OAuthClientTest extends Specification {
         mockServer
                 .expect(method(HttpMethod.POST))
                 .andExpect(requestTo(TOKEN_URL))
+                .andExpect(header("Accept", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(content().string("grant_type=authorization_code&code=my_code&redirect_uri=http%3A%2F%2Flocalhost&client_id=myclient&client_secret=mysecret")) // TODO make it nicer
                 .andRespond(withSuccess(JSONValue.toJSONString([access_token: token]), MediaType.APPLICATION_JSON))

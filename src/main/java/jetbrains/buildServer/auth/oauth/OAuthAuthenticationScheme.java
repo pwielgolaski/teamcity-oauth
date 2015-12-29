@@ -1,10 +1,8 @@
 package jetbrains.buildServer.auth.oauth;
 
 import com.google.common.base.Strings;
-import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationProtocol;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationResult;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationSchemeAdapter;
-import jetbrains.buildServer.controllers.interceptors.auth.util.HttpAuthUtil;
 import jetbrains.buildServer.serverSide.auth.LoginConfiguration;
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
@@ -17,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 
@@ -26,7 +23,7 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
     private static final Logger LOG = Logger.getLogger(OAuthAuthenticationScheme.class);
     public static final String CODE = "code";
     public static final String STATE = "state";
-    public static final String NAME = "name";
+    public static final String[] IDS_LIST = new String[]{"login", "name"};
 
     private final PluginDescriptor pluginDescriptor;
     private final ServerPrincipalFactory principalFactory;
@@ -87,13 +84,28 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         }
 
         Map userData = authClient.getUserData(token);
-        if (userData == null || !userData.containsKey(NAME)) {
-            return sendBadRequest(response,"Marked request as unauthenticated since user endpoint does not return 'name' field");
+        String userLogin = getUserLogin(userData);
+        if (userLogin == null) {
+            return sendBadRequest(response, "Marked request as unauthenticated since user endpoint does not return any login id");
         }
-        final ServerPrincipal principal = principalFactory.getServerPrincipal((String) userData.get(NAME), schemeProperties);
+
+        final ServerPrincipal principal = principalFactory.getServerPrincipal(userLogin, schemeProperties);
 
         LOG.debug("Request authenticated. Determined user " + principal.getName());
         return HttpAuthenticationResult.authenticated(principal, true);
+    }
+
+    @Nullable
+    private String getUserLogin(Map userData) {
+        for (String key : IDS_LIST) {
+            if (userData != null) {
+                String userLogin = (String) userData.get(key);
+                if (userLogin != null) {
+                    return userLogin;
+                }
+            }
+        }
+        return null;
     }
 
     private HttpAuthenticationResult sendBadRequest(HttpServletResponse response, String reason) throws IOException {

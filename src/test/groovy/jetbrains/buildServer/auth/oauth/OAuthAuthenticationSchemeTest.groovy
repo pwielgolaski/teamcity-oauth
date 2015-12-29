@@ -88,7 +88,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(400, "Marked request as unauthenticated since user endpoint does not return 'name' field")
+        1 * res.sendError(400, "Marked request as unauthenticated since user endpoint does not return any login id")
     }
 
     def "authenticate user"() {

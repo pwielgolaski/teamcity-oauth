@@ -3,10 +3,14 @@ package jetbrains.buildServer.auth.oauth;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class OAuthClient {
@@ -36,8 +40,10 @@ public class OAuthClient {
         form.add("redirect_uri", properties.getRootUrl());
         form.add("client_id", properties.getClientId());
         form.add("client_secret", properties.getClientSecret());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        String response = restTemplate.postForObject(properties.getTokenEndpoint(), form, String.class);
+        String response = restTemplate.postForObject(properties.getTokenEndpoint(), new HttpEntity<Object>(form, headers), String.class);
         Map jsonResponse = (Map) JSONValue.parse(response);
         return (String) jsonResponse.get("access_token");
     }
