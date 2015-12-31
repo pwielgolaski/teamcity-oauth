@@ -37,7 +37,7 @@ public class ServerPrincipalFactory {
 
         boolean allowCreatingNewUsersByLogin = AuthModuleUtil.allowCreatingNewUsersByLogin(schemeProperties, DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN);
         Map<PropertyKey, String> userProperties = ImmutableMap.<PropertyKey, String>of(PluginConstants.ID_USER_PROPERTY_KEY, userName);
-        return new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName, null, allowCreatingNewUsersByLogin, userProperties);
+        return new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName, PluginConstants.ID_USER_PROPERTY_KEY, allowCreatingNewUsersByLogin, userProperties);
     }
 
     @Nullable
