@@ -1,1 +1,7 @@
 language: java
+after_success:
+- "./gradlew bintrayUpload"
+env:
+  global:
+    - BINTRAY_USER=pwielgolaski
+    - secure: C54Ny4QV0BzfCO7cF9FPofIWAFaCkCJf5/YlipCxJUs2uoIndg7d+XAZfL8k4qJPXlxFzD4z6iRPoASeNF5Np8BTuBlPErOo35vX64V5wkmY4mpB/X9CZQiJWeOFuTohD/wwEof9a9e5odls5jc2rrl2k/RzGPFooykmOuYl9Li7cDbpJvouCgev61J1v8jlN9tel5BZKeq57J7BZfjInodDwdL5q34wh/IkI3e2rBvTHucq6U+7opbk7P2rJyID14snFUK8ORHr3qs+rXhU3v9RNxvIDEPnjKSJEoPmlvgNcvZKDLubF+K0H5+ela9ENls+Od8o2cz9Ee9z/FEj96RzvGWA/E4fDtNDh3WC62whdiBFV0qua0XdBg2g8ANfiZMR/8PKbBpiPXyzX1XC7lF0OhYw+eYhpiYa3iNJO52jgc8IveJz252/WANRa3SzhPQ+RBHshRDdPqQlyceI6gXV1K9hGajpAXlB8scvBgUWVTiFH9wmuAJ7c/4encxhA4RJuferN/qoBEpKmUfMzKfx/UFoC48/+jfSWWvY0A+m6XC+d++nz97wEffUAcbcgcchNEIX2zHrmEAma8avNOc90w1MWkmISl8uzMDFatuBXd13pGy7uOzAkBwpcONiRMl/2oORs6O9+9So+4R46lTqT38xUMhfIKpRhImEKVw=

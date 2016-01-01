@@ -72,7 +72,7 @@ bintray {
         into '.'
     }
     pkg {
-        repo = 'maven'
+        repo = 'generic'
         name = project.name
         desc = project.name
         licenses = ['Apache-2.0']
@@ -84,4 +84,8 @@ bintray {
             desc = 'TeamCity oAuth authentication Plugin'
         }
     }
+}
+
+bintrayUpload.onlyIf {
+    !(version ==~ /.*SNAPSHOT/)
 }
