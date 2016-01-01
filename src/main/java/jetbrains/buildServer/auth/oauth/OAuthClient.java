@@ -51,7 +51,7 @@ public class OAuthClient {
     public Map getUserData(String token) {
         String url = String.format("%s?access_token=%s", properties.getUserEndpoint(), token);
         String response = restTemplate.getForObject(url, String.class);
-        log.info("Fetched user data: " + response);
+        log.debug("Fetched user data: " + response);
         return (Map) JSONValue.parse(response);
     }
 }
