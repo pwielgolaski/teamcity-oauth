@@ -1,11 +1,15 @@
 package jetbrains.buildServer.auth.oauth;
 
 
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +25,10 @@ public class OAuthClient {
 
     public OAuthClient(AuthenticationSchemeProperties properties) {
         this.properties = properties;
-        this.restTemplate = new RestTemplate();
+        CloseableHttpClient httpClient =
+                HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier())
+                        .build();
+        this.restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
     }
 
     public String getRedirectUrl(String state) {
