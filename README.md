@@ -5,7 +5,7 @@ teamcity oauth2 authentication plugin
 
 # Installation
  
-Grab latest version of plugin from [ ![Download](https://api.bintray.com/packages/pwielgolaski/generic/teamcity-oauth/images/download.svg) ](https://bintray.com/pwielgolaski/generic/teamcity-oauth/_latestVersion)
+Grab latest version of plugin from https://bintray.com/pwielgolaski/generic/teamcity-oauth/_latestVersion
 and install it to Teamcity following https://confluence.jetbrains.com/display/TCD9/Installing+Additional+Plugins
 
 # Test drive
