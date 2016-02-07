@@ -3,6 +3,11 @@
 <%@ include file="/include-internal.jsp" %>
 <c:set var="oauthLoginUrl"><%=PluginConstants.Web.LOGIN_PATH%>
 </c:set>
+<style>
+    .loginForm {
+        display: none;
+    }
+</style>
 <div>
     <form action="<c:url value='${oauthLoginUrl}'/>" method="GET">
         <input class="btn loginButton" style="margin: auto; display: block" type="submit" name="submitLogin" value="Log in via oAuth">
