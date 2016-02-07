@@ -1,26 +1,40 @@
 package jetbrains.buildServer.auth.oauth
 
+import com.squareup.okhttp.internal.SslContextBuilder
+import com.squareup.okhttp.mockwebserver.MockResponse
+import com.squareup.okhttp.mockwebserver.MockWebServer
 import org.json.simple.JSONValue
-import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
-import org.springframework.test.web.client.MockRestServiceServer
-import org.springframework.web.util.UriComponentsBuilder
-import spock.lang.Specification
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
+import org.springframework.http.MediaType
+import org.springframework.web.util.UriComponentsBuilder
+import spock.lang.Shared
+import spock.lang.Specification
 
 class OAuthClientTest extends Specification {
 
+    public static String AUTHORIZE_URL = ""
+    public static String TOKEN_URL = ""
+    public static String USER_URL = ""
     public static final String ROOT_URL = "http://localhost"
-    public static final String AUTHORIZE_URL = "http://oauth/auth"
-    public static final String TOKEN_URL = "http://oauth/token"
-    public static final String USER_URL = "http://oauth/user"
     public static final String CLIENT_ID = "myclient"
     public static final String CLIENT_SECRET = "mysecret"
     public static final String SCOPE = "myscope"
+    @Shared
+    MockWebServer server = new MockWebServer(); ;
 
     OAuthClient client;
+
+    def setupSpec() {
+        server.useHttps(SslContextBuilder.localhost().getSocketFactory(), false);
+        server.start()
+        AUTHORIZE_URL = server.url("/auth")
+        TOKEN_URL = server.url("/token")
+        USER_URL = server.url("/user")
+    }
+
+    def cleanupSpec() {
+        server.shutdown()
+    }
 
     def setup() {
         def schemeProperties = Stub(AuthenticationSchemeProperties) {
@@ -43,7 +57,7 @@ class OAuthClientTest extends Specification {
         def redirectUrl = client.getRedirectUrl(state);
         def uri = UriComponentsBuilder.fromHttpUrl(redirectUrl).build();
         then:
-        uri.host == 'oauth'
+        uri.host == 'localhost'
         uri.path == '/auth'
         uri.queryParams.toSingleValueMap() == [response_type: 'code', client_id: CLIENT_ID, scope: SCOPE, state: state, redirect_uri: ROOT_URL]
     }
@@ -53,28 +67,25 @@ class OAuthClientTest extends Specification {
         setup:
         def code = 'my_code'
         def token = 'my_token'
-        def mockServer = MockRestServiceServer.createServer(client.restTemplate);
-        mockServer
-                .expect(method(HttpMethod.POST))
-                .andExpect(requestTo(TOKEN_URL))
-                .andExpect(header("Accept", MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(content().string("grant_type=authorization_code&code=my_code&redirect_uri=http%3A%2F%2Flocalhost&client_id=myclient&client_secret=mysecret")) // TODO make it nicer
-                .andRespond(withSuccess(JSONValue.toJSONString([access_token: token]), MediaType.APPLICATION_JSON))
+        server.enqueue(new MockResponse().setBody(JSONValue.toJSONString([access_token: token])))
         expect:
         client.getAccessToken(code) == token
+        def req = server.takeRequest()
+        req.method == 'POST'
+        req.path == '/token'
+        req.getHeader('Content-Type') == MediaType.APPLICATION_FORM_URLENCODED_VALUE
+        req.getHeader('Accept') == MediaType.APPLICATION_JSON_VALUE
+        req.getBody().readUtf8() == "grant_type=authorization_code&code=my_code&redirect_uri=http%3A%2F%2Flocalhost&client_id=myclient&client_secret=mysecret"
     }
 
     def "should fetch user data"() {
         setup:
         def token = 'test_token'
-        def mockServer = MockRestServiceServer.createServer(client.restTemplate);
-        def expectedURI = UriComponentsBuilder.fromHttpUrl(USER_URL).queryParam('access_token', token).build().toUri()
-        mockServer
-                .expect(method(HttpMethod.GET))
-                .andExpect(requestTo(expectedURI))
-                .andRespond(withSuccess('{"id" : "user", "name": "userName"}', MediaType.APPLICATION_JSON))
+        server.enqueue(new MockResponse().setBody(JSONValue.toJSONString([id: 'user', name: 'userName'])))
         expect:
         client.getUserData(token) == [id: 'user', name: 'userName']
+        def req = server.takeRequest()
+        req.method == 'GET'
+        req.path == '/user?access_token=' + token
     }
 }

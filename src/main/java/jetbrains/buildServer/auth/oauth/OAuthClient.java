@@ -1,34 +1,26 @@
 package jetbrains.buildServer.auth.oauth;
 
-
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
+import java.io.IOException;
 import java.util.Map;
 
 public class OAuthClient {
 
-    private RestTemplate restTemplate;
     private AuthenticationSchemeProperties properties;
     private static final Logger log = Logger.getLogger(OAuthClient.class);
+    private final OkHttpClient httpClient;
 
     public OAuthClient(AuthenticationSchemeProperties properties) {
         this.properties = properties;
-        CloseableHttpClient httpClient =
-                HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier())
-                        .build();
-        this.restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
+        this.httpClient = HttpClientFactory.createClient(true);
     }
 
     public String getRedirectUrl(String state) {
@@ -40,24 +32,29 @@ public class OAuthClient {
                 properties.getRootUrl());
     }
 
-    public String getAccessToken(String code) {
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>();
-        form.add("grant_type", "authorization_code");
-        form.add("code", code);
-        form.add("redirect_uri", properties.getRootUrl());
-        form.add("client_id", properties.getClientId());
-        form.add("client_secret", properties.getClientSecret());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    public String getAccessToken(String code) throws IOException {
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("grant_type", "authorization_code")
+                .add("code", code)
+                .add("redirect_uri", properties.getRootUrl())
+                .add("client_id", properties.getClientId())
+                .add("client_secret", properties.getClientSecret())
+                .build();
 
-        String response = restTemplate.postForObject(properties.getTokenEndpoint(), new HttpEntity<Object>(form, headers), String.class);
-        Map jsonResponse = (Map) JSONValue.parse(response);
+        Request request = new Request.Builder()
+                .url(properties.getTokenEndpoint())
+                .addHeader("Accept", MediaType.APPLICATION_JSON_VALUE)
+                .post(formBody)
+                .build();
+        Response response = httpClient.newCall(request).execute();
+        Map jsonResponse = (Map) JSONValue.parse(response.body().string());
         return (String) jsonResponse.get("access_token");
     }
 
-    public Map getUserData(String token) {
+    public Map getUserData(String token) throws IOException {
         String url = String.format("%s?access_token=%s", properties.getUserEndpoint(), token);
-        String response = restTemplate.getForObject(url, String.class);
+        Request request = new Request.Builder().url(url).build();
+        String response = httpClient.newCall(request).execute().body().string();
         log.debug("Fetched user data: " + response);
         return (Map) JSONValue.parse(response);
     }
