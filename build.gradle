@@ -27,8 +27,8 @@ scmVersion {
 
 version = scmVersion.version
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
     compile 'com.squareup.okhttp:okhttp:2.7.2'
