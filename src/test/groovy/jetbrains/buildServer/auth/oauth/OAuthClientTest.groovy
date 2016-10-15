@@ -1,8 +1,7 @@
 package jetbrains.buildServer.auth.oauth
 
-import com.squareup.okhttp.internal.SslContextBuilder
-import com.squareup.okhttp.mockwebserver.MockResponse
-import com.squareup.okhttp.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.json.simple.JSONValue
 
 import org.springframework.http.MediaType
@@ -25,7 +24,6 @@ class OAuthClientTest extends Specification {
     OAuthClient client;
 
     def setupSpec() {
-        server.useHttps(SslContextBuilder.localhost().getSocketFactory(), false);
         server.start()
         AUTHORIZE_URL = server.url("/auth")
         TOKEN_URL = server.url("/token")

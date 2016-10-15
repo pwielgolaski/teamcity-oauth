@@ -1,10 +1,10 @@
 package jetbrains.buildServer.auth.oauth;
 
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
 import org.springframework.http.MediaType;
@@ -33,7 +33,7 @@ public class OAuthClient {
     }
 
     public String getAccessToken(String code) throws IOException {
-        RequestBody formBody = new FormEncodingBuilder()
+        RequestBody formBody = new FormBody.Builder()
                 .add("grant_type", "authorization_code")
                 .add("code", code)
                 .add("redirect_uri", properties.getRootUrl())
