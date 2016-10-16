@@ -1,12 +1,13 @@
-= teamcity-oauth
+= teamcity-oauth image:https://api.bintray.com/packages/pwielgolaski/generic/teamcity-oauth/images/download.svg[link="https://bintray.com/pwielgolaski/generic/teamcity-oauth/_latestVersion"]
 
-oAuth2 authentication plugin
+oAuth2 authentication plugin 
 
 image:./docs/login-screen.png[Login Screen]
 
 = Installation
 
-Grab latest version of plugin from image::https://api.bintray.com/packages/pwielgolaski/generic/teamcity-oauth/images/download.svg[link="https://bintray.com/pwielgolaski/generic/teamcity-oauth/_latestVersion"]
+Grab latest version of plugin from link image:https://api.bintray.com/packages/pwielgolaski/generic/teamcity-oauth/images/download.svg[link="https://bintray.com/pwielgolaski/generic/teamcity-oauth/_latestVersion"]
+
 and install it to Teamcity following https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins[https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins]
 
 = Configuration
