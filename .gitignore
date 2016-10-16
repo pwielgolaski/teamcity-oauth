@@ -73,3 +73,4 @@ crashlytics-build.properties
 data/
 servers/
 downloads/
+auth-config.xml
