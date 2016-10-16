@@ -73,4 +73,3 @@ crashlytics-build.properties
 data/
 servers/
 downloads/
-docker/docker-compose.yml

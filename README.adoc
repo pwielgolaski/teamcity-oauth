@@ -1,0 +1,42 @@
+= teamcity-oauth
+
+oAuth2 authentication plugin
+
+image:./docs/login-screen.png[Login Screen]
+
+= Installation
+
+Grab latest version of plugin from image::https://api.bintray.com/packages/pwielgolaski/generic/teamcity-oauth/images/download.svg[link="https://bintray.com/pwielgolaski/generic/teamcity-oauth/_latestVersion"]
+and install it to Teamcity following https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins[https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins]
+
+= Configuration
+
+Plugin support github and custom oAuth installation.
+
+If you want to use github you need an application to be created https://github.com/settings/applications/new[https://github.com/settings/applications/new]
+
+Login as administrator and go to Administration &gt; Authentication
+
+Switch to advanced mode and add module HTTP-OAUTH.v2.
+
+image:./docs/config-screen.png[Configuration Screen]
+
+You need to specify your client id and client secret.
+Also you need to specific scope, `user` is fine for github.
+
+If you dont choose "Allow creating new users on the first login" only users that already exists in Teamcity can login.
+It means that you need account with the same name as user login name in oauth.
+
+You can decide if you want to hide user/password form on login screen (worth leaving unchecked when you test it).
+
+You can consider to disable also "Allow user registration from the login page" in "Built-in" module.
+
+Save and test out.
+
+Login at your Teamcity host.
+
+= Development
+
+Plugin can be build and deployed by `gradle deployPlugin`
+
+Teamcity instance for testing can be setup by `docker-compose up`

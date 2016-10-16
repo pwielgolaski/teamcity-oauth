@@ -1,0 +1,10 @@
+version: '2'
+services:
+  teamcity:
+    image: jetbrains/teamcity-server
+    environment:
+      TEAMCITY_SERVER_OPTS: " -Dteamcity.development.mode=true "
+    ports:
+     - "8111:8111"
+    volumes:
+     - ./data:/data/teamcity_server/datadir

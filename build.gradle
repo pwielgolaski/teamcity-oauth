@@ -45,7 +45,7 @@ dependencies {
 ext {
     teamcityVersion = '10.0.2'
     teamcityDir = "$rootDir/servers/TeamCity-${teamcityVersion}"
-    teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
+    teamcityDataDir = "$rootDir/data/"
     teamcityJavaHome = System.properties['java.home']
 }
 
@@ -57,7 +57,7 @@ teamcity {
         displayName = project.name
         version = project.version
         vendorName = 'wielgolaski.me'
-        description = 'TeamCity oAuth authentication Plugin'
+        description = 'oAuth2 authentication plugin'
         downloadUrl = 'https://github.com/pwielgolaski/teamcity-oauth/'
         email = 'pwielgolaski@gmail.com'
     }
