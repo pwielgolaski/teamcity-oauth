@@ -72,6 +72,11 @@
     <prop:textProperty style="width: 100%;" name="<%=ConfigKey.scope.toString()%>"/><br/>
     <span class="grayNote">OAuth scope of this TeamCity server.</span>
 </div>
+<div>
+    <label width="100%" for="<%=ConfigKey.scope%>">Hide login form:</label><br/>
+    <prop:checkboxProperty style="width: 100%;" name="<%=ConfigKey.hideLoginForm.toString()%>"/><br/>
+    <span class="grayNote">Hide user/password login form on Teamcity login page.</span>
+</div>
 
 <script type="text/javascript">
     BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');

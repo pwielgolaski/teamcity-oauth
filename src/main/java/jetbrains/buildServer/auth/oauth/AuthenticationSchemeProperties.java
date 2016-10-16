@@ -61,6 +61,10 @@ public class AuthenticationSchemeProperties {
         return getProperty(ConfigKey.scope);
     }
 
+    public boolean isHideLoginForm() {
+        return Boolean.valueOf(getProperty(ConfigKey.hideLoginForm));
+    }
+
     public boolean isSchemeConfigured() {
         return !loginConfiguration.getConfiguredAuthModules(OAuthAuthenticationScheme.class).isEmpty();
     }
