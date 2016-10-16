@@ -1,5 +1,6 @@
 package jetbrains.buildServer.auth.oauth;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -20,8 +21,13 @@ public class ConfigPresets {
         presets.put(name, preset);
     }
 
-    Optional<String> getPreset(String name, ConfigKey key) {
+    Optional<String> getPresetKey(String name, ConfigKey key) {
         Map<ConfigKey, String> preset = presets.get(name);
         return preset == null ? Optional.empty() : Optional.ofNullable(preset.get(key));
     }
+
+    Map<ConfigKey, String> getPreset(String name) {
+        return presets.getOrDefault(name, Collections.emptyMap());
+    }
+
 }

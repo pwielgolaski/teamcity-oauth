@@ -66,7 +66,7 @@ public class AuthenticationSchemeProperties {
     }
 
     private String getPresetProperty(ConfigKey key) {
-        return presets.getPreset(getPreset(), key).orElseGet(() -> getProperty(key));
+        return presets.getPresetKey(getPreset(), key).orElseGet(() -> getProperty(key));
     }
 
     private String getProperty(ConfigKey key) {

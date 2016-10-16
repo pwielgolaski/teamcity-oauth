@@ -21,6 +21,14 @@ class ConfigurationValidatorTest extends Specification {
         new ConfigurationValidator().validate(configuration).isEmpty();
     }
 
+    def "configuration is valid if preset define values"() {
+        given:
+        configuration[ConfigKey.preset.toString()] = 'github';
+        configuration.remove(ConfigKey.authorizeEndpoint.toString())
+        expect:
+        new ConfigurationValidator().validate(configuration).isEmpty();
+    }
+
     @Unroll
     def "configuration is not valid without #key"() {
         when:

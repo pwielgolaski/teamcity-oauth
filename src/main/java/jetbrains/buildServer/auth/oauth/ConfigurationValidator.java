@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ConfigurationValidator {
 
     private static final Map<ConfigKey, String> EMPTY_KEY_VALUE_MESSAGES;
 
     static {
-        EMPTY_KEY_VALUE_MESSAGES = new HashMap<ConfigKey, String>();
+        EMPTY_KEY_VALUE_MESSAGES = new HashMap<>();
         EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.authorizeEndpoint, "Authorization endpoint should be specified.");
         EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.tokenEndpoint, "Token endpoint should be specified.");
         EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.userEndpoint, "User endpoint should be specified.");
@@ -22,15 +23,20 @@ public class ConfigurationValidator {
         EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.scope, "Scope should be specified.");
     }
 
-    public Collection<String> validate(@NotNull Map<String, String> properties) {
-        final Collection<String> errors = new ArrayList<String>();
-        for (Map.Entry<ConfigKey, String> mapping : EMPTY_KEY_VALUE_MESSAGES.entrySet()) {
-            if (StringUtil.isEmptyOrSpaces(properties.get(mapping.getKey().toString()))) {
-                errors.add(mapping.getValue());
-            }
-        }
-        return errors;
+    private final ConfigPresets presets;
+
+    public ConfigurationValidator() {
+        presets = new ConfigPresets();
     }
 
+    public Collection<String> validate(@NotNull Map<String, String> properties) {
+        String preset = properties.get(ConfigKey.preset.toString());
+        presets.getPreset(preset).forEach( (k, v) -> properties.put(k.toString(), v));
+        final Collection<String> errors = EMPTY_KEY_VALUE_MESSAGES.entrySet().stream()
+                .filter(mapping -> StringUtil.isEmptyOrSpaces(properties.get(mapping.getKey().toString())))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toCollection(ArrayList::new));
+        return errors;
+    }
 
 }
