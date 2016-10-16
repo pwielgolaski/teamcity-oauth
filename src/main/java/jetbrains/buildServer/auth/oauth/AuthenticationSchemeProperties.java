@@ -11,12 +11,14 @@ import java.util.Map;
 
 public class AuthenticationSchemeProperties {
 
+    private final ConfigPresets presets;
     private ServerSettings serverSettings;
     private LoginConfiguration loginConfiguration;
 
     public AuthenticationSchemeProperties(@NotNull final ServerSettings serverSettings, @NotNull final LoginConfiguration loginConfiguration) {
         this.serverSettings = serverSettings;
         this.loginConfiguration = loginConfiguration;
+        this.presets = new ConfigPresets();
     }
 
     @Nullable
@@ -25,18 +27,23 @@ public class AuthenticationSchemeProperties {
     }
 
     @Nullable
+    public String getPreset() {
+        return getProperty(ConfigKey.preset);
+    }
+
+    @Nullable
     public String getAuthorizeEndpoint() {
-        return getProperty(ConfigKey.authorizeEndpoint);
+        return getPresetProperty(ConfigKey.authorizeEndpoint);
     }
 
     @Nullable
     public String getTokenEndpoint() {
-        return getProperty(ConfigKey.tokenEndpoint);
+        return getPresetProperty(ConfigKey.tokenEndpoint);
     }
 
     @Nullable
     public String getUserEndpoint() {
-        return getProperty(ConfigKey.userEndpoint);
+        return getPresetProperty(ConfigKey.userEndpoint);
     }
 
     @Nullable
@@ -56,6 +63,10 @@ public class AuthenticationSchemeProperties {
 
     public boolean isSchemeConfigured() {
         return !loginConfiguration.getConfiguredAuthModules(OAuthAuthenticationScheme.class).isEmpty();
+    }
+
+    private String getPresetProperty(ConfigKey key) {
+        return presets.getPreset(getPreset(), key).orElseGet(() -> getProperty(key));
     }
 
     private String getProperty(ConfigKey key) {
