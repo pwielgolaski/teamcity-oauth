@@ -23,7 +23,7 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
     private static final Logger LOG = Logger.getLogger(OAuthAuthenticationScheme.class);
     public static final String CODE = "code";
     public static final String STATE = "state";
-    public static final String[] IDS_LIST = new String[]{"login", "name"};
+    public static final String[] IDS_LIST = new String[]{"login", "username", "name"};
 
     private final PluginDescriptor pluginDescriptor;
     private final ServerPrincipalFactory principalFactory;
