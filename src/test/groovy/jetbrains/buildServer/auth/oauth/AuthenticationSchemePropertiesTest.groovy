@@ -48,6 +48,16 @@ class AuthenticationSchemePropertiesTest extends Specification {
         schemeProperties.getUserEndpoint() == 'https://api.github.com/user'
     }
 
+    def "configuration is valid for bitbucket preset"() {
+        given:
+        configuration[ConfigKey.preset.toString()] = 'bitbucket'
+        expect:
+        schemeProperties.getAuthorizeEndpoint() == 'https://bitbucket.org/site/oauth2/authorize'
+        schemeProperties.getTokenEndpoint() == 'https://bitbucket.org/site/oauth2/access_token'
+        schemeProperties.getUserEndpoint() == 'https://api.bitbucket.org/2.0/user'
+    }
+
+
     def "configuration is valid for custom preset"() {
         given:
         configuration[ConfigKey.preset.toString()] = 'custom'
