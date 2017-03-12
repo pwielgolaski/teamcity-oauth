@@ -1,5 +1,6 @@
 package jetbrains.buildServer.auth.oauth;
 
+import com.intellij.openapi.util.text.StringUtil;
 import okhttp3.*;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
@@ -20,12 +21,15 @@ public class OAuthClient {
     }
 
     public String getRedirectUrl(String state) {
-        return String.format("%s?response_type=code&client_id=%s&scope=%s&state=%s&redirect_uri=%s",
-                properties.getAuthorizeEndpoint(),
-                properties.getClientId(),
-                properties.getScope(),
-                state,
-                properties.getRootUrl());
+        StringBuilder  urlBuilder = new StringBuilder(properties.getAuthorizeEndpoint())
+                .append("?response_type=code")
+                .append("&client_id=").append(properties.getClientId())
+                .append("&state=").append(state)
+                .append("&redirect_uri=").append(properties.getRootUrl());
+        if (StringUtil.isNotEmpty(properties.getScope())) {
+            urlBuilder.append("&scope=").append(properties.getScope());
+        }
+        return urlBuilder.toString();
     }
 
     public String getAccessToken(String code) throws IOException {

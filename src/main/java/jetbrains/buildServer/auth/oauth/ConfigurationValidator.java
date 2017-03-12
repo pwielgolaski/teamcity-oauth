@@ -20,7 +20,6 @@ public class ConfigurationValidator {
         EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.userEndpoint, "User endpoint should be specified.");
         EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.clientId, "Client ID should be specified.");
         EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.clientSecret, "Client secret should be specified.");
-        EMPTY_KEY_VALUE_MESSAGES.put(ConfigKey.scope, "Scope should be specified.");
     }
 
     private final ConfigPresets presets;
