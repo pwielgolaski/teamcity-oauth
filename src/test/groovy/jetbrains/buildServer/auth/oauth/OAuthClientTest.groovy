@@ -84,6 +84,7 @@ class OAuthClientTest extends Specification {
         client.getUserData(token) == [id: 'user', name: 'userName']
         def req = server.takeRequest()
         req.method == 'GET'
-        req.path == '/user?access_token=' + token
+        req.path == '/user'
+        req.headers.get('Authorization') == 'Bearer ' + token
     }
 }

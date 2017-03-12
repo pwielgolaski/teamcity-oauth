@@ -1,10 +1,6 @@
 package jetbrains.buildServer.auth.oauth;
 
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
 import org.springframework.http.MediaType;
@@ -52,8 +48,10 @@ public class OAuthClient {
     }
 
     public Map getUserData(String token) throws IOException {
-        String url = String.format("%s?access_token=%s", properties.getUserEndpoint(), token);
-        Request request = new Request.Builder().url(url).build();
+        Request request = new Request.Builder()
+                .url(properties.getUserEndpoint())
+                .addHeader("Authorization","Bearer " + token)
+                .build();
         String response = httpClient.newCall(request).execute().body().string();
         log.debug("Fetched user data: " + response);
         return (Map) JSONValue.parse(response);
