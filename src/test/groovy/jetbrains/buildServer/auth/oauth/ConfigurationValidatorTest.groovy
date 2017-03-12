@@ -46,7 +46,6 @@ class ConfigurationValidatorTest extends Specification {
         ConfigKey.userEndpoint      || "User endpoint should be specified."
         ConfigKey.clientId          || "Client ID should be specified."
         ConfigKey.clientSecret      || "Client secret should be specified."
-        ConfigKey.scope             || "Scope should be specified."
     }
 
 }
