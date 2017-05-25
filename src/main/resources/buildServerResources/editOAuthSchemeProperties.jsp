@@ -37,6 +37,7 @@
                          onchange="BS.TeamCityOAuth.selectPresetType()">
         <prop:option value="github">GitHub</prop:option>
         <prop:option value="bitbucket">Bitbucket</prop:option>
+        <prop:option value="google">Google</prop:option>
         <prop:option value="custom">Custom</prop:option>
     </prop:selectProperty><br/>
     <span class="grayNote">Preset settings</span>

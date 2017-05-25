@@ -23,7 +23,10 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
     private static final Logger LOG = Logger.getLogger(OAuthAuthenticationScheme.class);
     public static final String CODE = "code";
     public static final String STATE = "state";
-    public static final String[] IDS_LIST = new String[]{"login", "username", "name"};
+    public static final String[] IDS_LIST = new String[]{"id", "sub", "email"};
+    public static final String[] NAME_LIST = new String[]{"name"};
+    public static final String[] EMAIL_LIST = new String[]{"email"};
+
 
     private final PluginDescriptor pluginDescriptor;
     private final ServerPrincipalFactory principalFactory;
@@ -84,25 +87,63 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         }
 
         Map userData = authClient.getUserData(token);
-        String userLogin = getUserLogin(userData);
-        if (userLogin == null) {
+        String userId = getId(userData);
+        String userName = getName(userData);
+        String userEmail = getEmail(userData);
+
+        if ( userId == null || userName == null || userEmail == null) {
             return sendBadRequest(response, "Marked request as unauthenticated since user endpoint does not return any login id");
         }
 
-        final ServerPrincipal principal = principalFactory.getServerPrincipal(userLogin, schemeProperties);
+        final ServerPrincipal principal = principalFactory.getServerPrincipal(userId, userName, userEmail, schemeProperties);
+        if( principal == null ) {
+            return sendBadRequest(response, "Marked request as unauthenticated since a user does not exist or failed to be created.");
+        }
 
         LOG.debug("Request authenticated. Determined user " + principal.getName());
         return HttpAuthenticationResult.authenticated(principal, true);
     }
 
     @Nullable
-    private String getUserLogin(Map userData) {
+    private String getId(Map userData) {
+        if (userData == null) {
+            return null;
+        }
+
         for (String key : IDS_LIST) {
-            if (userData != null) {
-                String userLogin = (String) userData.get(key);
-                if (userLogin != null) {
-                    return userLogin;
-                }
+            String userId = (String) userData.get(key);
+            if (userId != null) {
+                return userId;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private String getEmail(Map userData) {
+        if (userData == null) {
+            return null;
+        }
+
+        for (String key : EMAIL_LIST) {
+            String userEmail = (String) userData.get(key);
+            if (userEmail != null) {
+                return userEmail;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private String getName(Map userData) {
+        if (userData == null) {
+            return null;
+        }
+
+        for (String key : NAME_LIST) {
+            String userName = (String) userData.get(key);
+            if (userName != null) {
+                return userName;
             }
         }
         return null;

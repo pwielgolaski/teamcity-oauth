@@ -28,22 +28,27 @@ public class ServerPrincipalFactory {
     }
 
     @NotNull
-    public ServerPrincipal getServerPrincipal(@NotNull final String userName, @NotNull Map<String, String> schemeProperties) {
-        ServerPrincipal existingPrincipal = findExistingPrincipal(userName);
+    public ServerPrincipal getServerPrincipal(@NotNull final String userId, @NotNull final String userName, @NotNull final String userEmail, @NotNull Map<String, String> schemeProperties) {
+        boolean createUser = AuthModuleUtil.allowCreatingNewUsersByLogin(schemeProperties, DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN);
+
+        ServerPrincipal existingPrincipal = findExistingPrincipal(userId);
         if (existingPrincipal != null) {
             LOG.info("Use existing user: " + userName);
             return existingPrincipal;
         }
 
-        boolean allowCreatingNewUsersByLogin = AuthModuleUtil.allowCreatingNewUsersByLogin(schemeProperties, DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN);
-        Map<PropertyKey, String> userProperties = ImmutableMap.<PropertyKey, String>of(PluginConstants.ID_USER_PROPERTY_KEY, userName);
-        return new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName, PluginConstants.ID_USER_PROPERTY_KEY, allowCreatingNewUsersByLogin, userProperties);
+        if (createUser) {
+            existingPrincipal = createUser(userId, userName, userEmail);
+        }
+
+
+        return existingPrincipal;
     }
 
     @Nullable
-    private ServerPrincipal findExistingPrincipal(@NotNull final String userName) {
+    private ServerPrincipal findExistingPrincipal(@NotNull final String userId) {
         try {
-            final SUser user = userModel.findUserByUsername(userName, PluginConstants.ID_USER_PROPERTY_KEY);
+            final SUser user = userModel.findUserByUsername(userId, PluginConstants.ID_USER_PROPERTY_KEY);
             if (user != null) {
                 return new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.getUsername());
             }
@@ -52,4 +57,15 @@ public class ServerPrincipalFactory {
         }
         return null;
     }
+
+    @Nullable
+    private ServerPrincipal createUser(@NotNull final String userId, @NotNull final String userName, final String userEmail) {
+        final SUser user = userModel.createUserAccount(null, userEmail);
+        user.updateUserAccount(userEmail, userName, userEmail);
+        Map<PropertyKey, String> userProperties = ImmutableMap.<PropertyKey, String>of(PluginConstants.ID_USER_PROPERTY_KEY, userId);
+        user.setUserProperties(userProperties);
+
+        return new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName, PluginConstants.ID_USER_PROPERTY_KEY, false, userProperties);
+    }
+
 }
