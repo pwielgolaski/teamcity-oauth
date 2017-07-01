@@ -3,7 +3,6 @@ package jetbrains.buildServer.auth.oauth;
 import com.google.common.base.Strings;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationResult;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationSchemeAdapter;
-import jetbrains.buildServer.serverSide.auth.LoginConfiguration;
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.apache.log4j.Logger;
@@ -29,14 +28,12 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
     private final ServerPrincipalFactory principalFactory;
     private final OAuthClient authClient;
 
-    public OAuthAuthenticationScheme(@NotNull final LoginConfiguration loginConfiguration,
-                                     @NotNull final PluginDescriptor pluginDescriptor,
+    public OAuthAuthenticationScheme(@NotNull final PluginDescriptor pluginDescriptor,
                                      @NotNull final ServerPrincipalFactory principalFactory,
                                      @NotNull final OAuthClient authClient) {
         this.pluginDescriptor = pluginDescriptor;
         this.principalFactory = principalFactory;
         this.authClient = authClient;
-        loginConfiguration.registerAuthModuleType(this);
     }
 
     @NotNull

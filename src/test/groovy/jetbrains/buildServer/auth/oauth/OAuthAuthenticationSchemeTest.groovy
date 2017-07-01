@@ -18,12 +18,11 @@ class OAuthAuthenticationSchemeTest extends Specification {
     OAuthAuthenticationScheme scheme
 
     def setup() {
-        LoginConfiguration loginConfiguration = Mock()
         PluginDescriptor pluginDescriptor = Mock()
         ServerPrincipalFactory principalFactory = Mock() {
             getServerPrincipal(_, _) >> { String userName, _ -> new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName) }
         }
-        scheme = new OAuthAuthenticationScheme(loginConfiguration, pluginDescriptor, principalFactory, client)
+        scheme = new OAuthAuthenticationScheme(pluginDescriptor, principalFactory, client)
     }
 
 
