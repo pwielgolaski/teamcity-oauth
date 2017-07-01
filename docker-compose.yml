@@ -3,8 +3,9 @@ services:
   teamcity:
     image: jetbrains/teamcity-server
     environment:
-      TEAMCITY_SERVER_OPTS: " -Dteamcity.development.mode=true "
+      TEAMCITY_SERVER_OPTS: " -Dteamcity.development.mode=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
     ports:
      - "8111:8111"
+     - "5005:5005"
     volumes:
      - ./data:/data/teamcity_server/datadir

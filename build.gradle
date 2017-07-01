@@ -30,23 +30,23 @@ version = scmVersion.version
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+ext {
+    teamcityVersion = '10.0.2'
+    teamcityDir = "$rootDir/servers/TeamCity-${teamcityVersion}"
+    teamcityDataDir = "$rootDir/data/"
+    teamcityJavaHome = System.properties['java.home']
+    okhttpVersion = '3.8.1'
+}
+
 dependencies {
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
     compile('com.googlecode.json-simple:json-simple:1.1.1') {
         exclude group: 'junit'
     }
     // mandatory dependencies for using Spock
     testCompile 'org.codehaus.groovy:groovy-all:2.4.1'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-    testCompile 'org.springframework:spring-test:4.0.9.RELEASE'
-    testCompile 'com.squareup.okhttp3:mockwebserver:3.4.1'
-}
-
-ext {
-    teamcityVersion = '10.0.2'
-    teamcityDir = "$rootDir/servers/TeamCity-${teamcityVersion}"
-    teamcityDataDir = "$rootDir/data/"
-    teamcityJavaHome = System.properties['java.home']
+    testCompile "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
 }
 
 teamcity {
