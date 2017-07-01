@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class AuthenticationSchemeProperties {
 
@@ -83,5 +84,11 @@ public class AuthenticationSchemeProperties {
     private Map<String, String> getSchemeProperties() {
         List<AuthModule<OAuthAuthenticationScheme>> aadAuthModules = loginConfiguration.getConfiguredAuthModules(OAuthAuthenticationScheme.class);
         return aadAuthModules.isEmpty() ? null : aadAuthModules.get(0).getProperties();
+    }
+
+    public boolean isAllowInsecureHttps() {
+        return Optional.ofNullable(getProperty(ConfigKey.allowInsecureHttps))
+                .map(Boolean::valueOf)
+                .orElse(true);
     }
 }

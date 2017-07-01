@@ -17,7 +17,7 @@ public class OAuthClient {
 
     public OAuthClient(AuthenticationSchemeProperties properties) {
         this.properties = properties;
-        this.httpClient = HttpClientFactory.createClient(true);
+        this.httpClient = HttpClientFactory.createClient(properties.isAllowInsecureHttps());
     }
 
     public String getRedirectUrl(String state) {

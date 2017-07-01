@@ -74,11 +74,15 @@
     <span class="grayNote">OAuth scope of this TeamCity server.</span>
 </div>
 <div>
-    <label width="100%" for="<%=ConfigKey.scope%>">Hide login form:</label><br/>
-    <prop:checkboxProperty style="width: 100%;" name="<%=ConfigKey.hideLoginForm.toString()%>"/><br/>
+    <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.hideLoginForm.toString()%>"/>
+    <label width="100%" for="<%=ConfigKey.hideLoginForm%>">Hide login form</label><br/>
     <span class="grayNote">Hide user/password login form on Teamcity login page.</span>
 </div>
-
+<div>
+    <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.allowInsecureHttps.toString()%>"/>
+    <label width="100%" for="<%=ConfigKey.allowInsecureHttps%>">Insecure https</label><br/>
+    <span class="grayNote">Allow insecure https access like invalid certificate (restart required)</span>
+</div>
 <script type="text/javascript">
     BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');
 </script>

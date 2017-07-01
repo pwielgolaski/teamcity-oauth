@@ -9,5 +9,6 @@ public enum ConfigKey {
     clientId,
     clientSecret,
     scope,
-    hideLoginForm
+    hideLoginForm,
+    allowInsecureHttps
 }
