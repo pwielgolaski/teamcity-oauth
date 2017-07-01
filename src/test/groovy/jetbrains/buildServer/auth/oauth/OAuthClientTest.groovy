@@ -3,7 +3,6 @@ package jetbrains.buildServer.auth.oauth
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.json.simple.JSONValue
-
 import org.springframework.http.MediaType
 import org.springframework.web.util.UriComponentsBuilder
 import spock.lang.Shared
@@ -17,11 +16,11 @@ class OAuthClientTest extends Specification {
     public static final String ROOT_URL = "http://localhost"
     public static final String CLIENT_ID = "myclient"
     public static final String CLIENT_SECRET = "mysecret"
-    public static final String SCOPE = "myscope"
     @Shared
-    MockWebServer server = new MockWebServer(); ;
+    MockWebServer server = new MockWebServer()
 
     OAuthClient client;
+    def schemeProperties;
 
     def setupSpec() {
         server.start()
@@ -35,14 +34,13 @@ class OAuthClientTest extends Specification {
     }
 
     def setup() {
-        def schemeProperties = Stub(AuthenticationSchemeProperties) {
+        schemeProperties = Stub(AuthenticationSchemeProperties) {
             getRootUrl() >> ROOT_URL
             getAuthorizeEndpoint() >> AUTHORIZE_URL
             getTokenEndpoint() >> TOKEN_URL
             getUserEndpoint() >> USER_URL
             getClientId() >> CLIENT_ID
             getClientSecret() >> CLIENT_SECRET
-            getScope() >> SCOPE
         }
         client = new OAuthClient(schemeProperties)
     }
@@ -50,6 +48,7 @@ class OAuthClientTest extends Specification {
 
     def "should generate redirect url"() {
         setup:
+        schemeProperties.getScope() >> scope
         def state = "state"
         when:
         def redirectUrl = client.getRedirectUrl(state);
@@ -57,9 +56,18 @@ class OAuthClientTest extends Specification {
         then:
         uri.host == 'localhost'
         uri.path == '/auth'
-        uri.queryParams.toSingleValueMap() == [response_type: 'code', client_id: CLIENT_ID, scope: SCOPE, state: state, redirect_uri: ROOT_URL]
+        def query = uri.queryParams.toSingleValueMap()
+        query['response_type'] == 'code'
+        query['client_id'] == CLIENT_ID
+        query['state'] == state
+        query['scope'] == expectedScope
+        query['redirect_uri'] == ROOT_URL
+        where:
+        scope           || expectedScope
+        ""              || null
+        "scope1"        || "scope1"
+        "scope1 scope2" || "scope1%20scope2"
     }
-
 
     def "should fetch token data"() {
         setup:

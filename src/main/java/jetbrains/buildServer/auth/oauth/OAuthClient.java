@@ -21,15 +21,17 @@ public class OAuthClient {
     }
 
     public String getRedirectUrl(String state) {
-        StringBuilder  urlBuilder = new StringBuilder(properties.getAuthorizeEndpoint())
-                .append("?response_type=code")
-                .append("&client_id=").append(properties.getClientId())
-                .append("&state=").append(state)
-                .append("&redirect_uri=").append(properties.getRootUrl());
+        HttpUrl.Builder builder = HttpUrl.parse(properties.getAuthorizeEndpoint())
+                .newBuilder()
+                .addQueryParameter("response_type", "code")
+                .addQueryParameter("client_id", properties.getClientId())
+                .addQueryParameter("state", state)
+                .addQueryParameter("redirect_uri", properties.getRootUrl());
         if (StringUtil.isNotEmpty(properties.getScope())) {
-            urlBuilder.append("&scope=").append(properties.getScope());
+            builder.addQueryParameter("scope", properties.getScope());
         }
-        return urlBuilder.toString();
+        return builder.build().toString();
+
     }
 
     public String getAccessToken(String code) throws IOException {
