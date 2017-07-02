@@ -1,23 +1,32 @@
 package jetbrains.buildServer.auth.oauth;
 
 import com.intellij.openapi.util.text.StringUtil;
-import okhttp3.*;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONValue;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class OAuthClient {
 
     private AuthenticationSchemeProperties properties;
     private static final Logger log = Logger.getLogger(OAuthClient.class);
-    private final OkHttpClient httpClient;
+    private final Map<Boolean, OkHttpClient> httpClients = new HashMap<>();
 
     public OAuthClient(AuthenticationSchemeProperties properties) {
         this.properties = properties;
-        this.httpClient = HttpClientFactory.createClient(properties.isAllowInsecureHttps());
+    }
+
+    private OkHttpClient getHttpClient() {
+        return httpClients.computeIfAbsent(properties.isAllowInsecureHttps(), HttpClientFactory::createClient);
     }
 
     public String getRedirectUrl(String state) {
@@ -48,7 +57,7 @@ public class OAuthClient {
                 .addHeader("Accept", MediaType.APPLICATION_JSON_VALUE)
                 .post(formBody)
                 .build();
-        Response response = httpClient.newCall(request).execute();
+        Response response = getHttpClient().newCall(request).execute();
         Map jsonResponse = (Map) JSONValue.parse(response.body().string());
         return (String) jsonResponse.get("access_token");
     }
@@ -58,7 +67,7 @@ public class OAuthClient {
                 .url(properties.getUserEndpoint())
                 .addHeader("Authorization","Bearer " + token)
                 .build();
-        String response = httpClient.newCall(request).execute().body().string();
+        String response = getHttpClient().newCall(request).execute().body().string();
         log.debug("Fetched user data: " + response);
         return (Map) JSONValue.parse(response);
     }

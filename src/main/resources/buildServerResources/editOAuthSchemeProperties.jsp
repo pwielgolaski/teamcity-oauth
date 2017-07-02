@@ -81,7 +81,7 @@
 <div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.allowInsecureHttps.toString()%>"/>
     <label width="100%" for="<%=ConfigKey.allowInsecureHttps%>">Insecure https</label><br/>
-    <span class="grayNote">Allow insecure https access like invalid certificate (restart required)</span>
+    <span class="grayNote">Allow insecure https access like invalid certificate</span>
 </div>
 <script type="text/javascript">
     BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');
