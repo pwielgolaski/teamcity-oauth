@@ -91,4 +91,8 @@ public class AuthenticationSchemeProperties {
                 .map(Boolean::valueOf)
                 .orElse(true);
     }
+
+    public boolean isGuestLoginAllowed() {
+        return loginConfiguration.isGuestLoginAllowed();
+    }
 }
