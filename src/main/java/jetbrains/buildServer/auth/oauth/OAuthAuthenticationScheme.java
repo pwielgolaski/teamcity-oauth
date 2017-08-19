@@ -22,7 +22,6 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
     private static final Logger LOG = Logger.getLogger(OAuthAuthenticationScheme.class);
     public static final String CODE = "code";
     public static final String STATE = "state";
-    public static final String[] IDS_LIST = new String[]{"login", "username", "name"};
 
     private final PluginDescriptor pluginDescriptor;
     private final ServerPrincipalFactory principalFactory;
@@ -80,29 +79,15 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
             return sendBadRequest(response, String.format("Marked request as unauthenticated since failed to fetch token for code '%s' and state '%s'.", code, state));
         }
 
-        Map userData = authClient.getUserData(token);
-        String userLogin = getUserLogin(userData);
-        if (userLogin == null) {
+        OAuthUser user = authClient.getUserData(token);
+        if (user.getId() == null) {
             return sendBadRequest(response, "Marked request as unauthenticated since user endpoint does not return any login id");
         }
 
-        final ServerPrincipal principal = principalFactory.getServerPrincipal(userLogin, schemeProperties);
+        final ServerPrincipal principal = principalFactory.getServerPrincipal(user);
 
         LOG.debug("Request authenticated. Determined user " + principal.getName());
         return HttpAuthenticationResult.authenticated(principal, true);
-    }
-
-    @Nullable
-    private String getUserLogin(Map userData) {
-        for (String key : IDS_LIST) {
-            if (userData != null) {
-                String userLogin = (String) userData.get(key);
-                if (userLogin != null) {
-                    return userLogin;
-                }
-            }
-        }
-        return null;
     }
 
     private HttpAuthenticationResult sendBadRequest(HttpServletResponse response, String reason) throws IOException {

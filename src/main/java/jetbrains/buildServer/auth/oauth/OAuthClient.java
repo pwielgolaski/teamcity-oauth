@@ -62,13 +62,13 @@ public class OAuthClient {
         return (String) jsonResponse.get("access_token");
     }
 
-    public Map getUserData(String token) throws IOException {
+    public OAuthUser getUserData(String token) throws IOException {
         Request request = new Request.Builder()
                 .url(properties.getUserEndpoint())
                 .addHeader("Authorization","Bearer " + token)
                 .build();
         String response = getHttpClient().newCall(request).execute().body().string();
         log.debug("Fetched user data: " + response);
-        return (Map) JSONValue.parse(response);
+        return new OAuthUser((Map) JSONValue.parse(response));
     }
 }

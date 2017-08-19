@@ -20,7 +20,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
     def setup() {
         PluginDescriptor pluginDescriptor = Mock()
         ServerPrincipalFactory principalFactory = Mock() {
-            getServerPrincipal(_, _) >> { String userName, _ -> new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName) }
+            getServerPrincipal(_) >> { OAuthUser user -> new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) }
         }
         scheme = new OAuthAuthenticationScheme(pluginDescriptor, principalFactory, client)
     }
@@ -83,6 +83,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
             getRequestedSessionId() >> "state"
         }
         client.getAccessToken("code") >> "token"
+        client.getUserData("token") >> new OAuthUser(null)
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
@@ -98,7 +99,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
             getRequestedSessionId() >> "state"
         }
         client.getAccessToken("code") >> "token"
-        client.getUserData("token") >> [name: "testUser"]
+        client.getUserData("token") >> new OAuthUser("testUser")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:

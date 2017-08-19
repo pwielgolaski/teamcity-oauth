@@ -41,6 +41,7 @@ class OAuthClientTest extends Specification {
             getUserEndpoint() >> USER_URL
             getClientId() >> CLIENT_ID
             getClientSecret() >> CLIENT_SECRET
+            isAllowInsecureHttps() >> true
         }
         client = new OAuthClient(schemeProperties)
     }
@@ -87,9 +88,9 @@ class OAuthClientTest extends Specification {
     def "should fetch user data"() {
         setup:
         def token = 'test_token'
-        server.enqueue(new MockResponse().setBody(JSONValue.toJSONString([id: 'user', name: 'userName'])))
+        server.enqueue(new MockResponse().setBody(JSONValue.toJSONString([id: 'user', name: 'userName', email: 'email'])))
         expect:
-        client.getUserData(token) == [id: 'user', name: 'userName']
+        client.getUserData(token) == new OAuthUser('user', 'userName', 'email')
         def req = server.takeRequest()
         req.method == 'GET'
         req.path == '/user'

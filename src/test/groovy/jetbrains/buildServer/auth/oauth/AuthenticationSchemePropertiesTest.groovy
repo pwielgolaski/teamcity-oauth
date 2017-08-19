@@ -28,6 +28,30 @@ class AuthenticationSchemePropertiesTest extends Specification {
         schemeProperties.getRootUrl() == 'rooturl'
     }
 
+    def "configuration read allow insecure https"() {
+        setup:
+        configuration[ConfigKey.allowInsecureHttps.toString()] = value
+        expect:
+        schemeProperties.isAllowInsecureHttps() == expectedValue
+        where:
+        value   || expectedValue
+        null    || true
+        "false" || false
+        "true"  || true
+    }
+
+    def "configuration read hide login dialog"() {
+        setup:
+        configuration[ConfigKey.hideLoginForm.toString()] = value
+        expect:
+        schemeProperties.isHideLoginForm() == expectedValue
+        where:
+        value   || expectedValue
+        "false" || false
+        "true"  || true
+        null    || false
+    }
+
     def "configuration read client settings"() {
         given:
         configuration[ConfigKey.clientId.toString()] = 'clientID'

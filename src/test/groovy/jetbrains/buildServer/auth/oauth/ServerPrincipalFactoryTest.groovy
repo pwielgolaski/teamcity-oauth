@@ -9,7 +9,7 @@ import spock.lang.Specification
 class ServerPrincipalFactoryTest extends Specification {
 
     UserModel userModel = Mock()
-    SUser user = Mock()
+    SUser teamcityUser = Mock()
     ServerPrincipalFactory principalFactory;
 
     def setup() {
@@ -18,42 +18,41 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "read user from model"() {
         given:
-        def userName = "testUser"
-        user.getUsername() >> userName
-        userModel.findUserByUsername(_,_) >> user
+        def user = new OAuthUser("testUser")
+        this.teamcityUser.getUsername() >> user.id
+        userModel.findUserByUsername(_, _) >> this.teamcityUser
         when:
-        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, [:])
+        ServerPrincipal principal = principalFactory.getServerPrincipal(user)
         then:
         principal != null
-        principal.name == userName
+        principal.name == user.id
         principal.realm == PluginConstants.OAUTH_AUTH_SCHEME_NAME
-        !principal.creatingNewUserAllowed
     }
 
 
     def "create user if model reports null"() {
         given:
-        def userName = "testUser"
+        def user = new OAuthUser("testUser")
         userModel.findUserByUsername(_,_) >> null
+        userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) >> teamcityUser
         when:
-        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, [:])
+        ServerPrincipal principal = principalFactory.getServerPrincipal(user)
         then:
         principal != null
-        principal.name == userName
+        principal.name == user.id
         principal.realm == PluginConstants.OAUTH_AUTH_SCHEME_NAME
-        principal.creatingNewUserAllowed
     }
 
     def "create user if model reports exception"() {
         given:
-        def userName = "testUser"
+        def user = new OAuthUser("testUser")
         userModel.findUserByUsername(_,_) >> { throw new InvalidUsernameException("mocked reason") }
+        userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) >> teamcityUser
         when:
-        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, [:])
+        ServerPrincipal principal = principalFactory.getServerPrincipal(user)
         then:
         principal != null
-        principal.name == userName
+        principal.name == user.id
         principal.realm == PluginConstants.OAUTH_AUTH_SCHEME_NAME
-        principal.creatingNewUserAllowed
     }
 }
