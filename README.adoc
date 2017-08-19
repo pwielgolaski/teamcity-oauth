@@ -12,7 +12,7 @@ and install it to Teamcity following https://confluence.jetbrains.com/display/TC
 
 = Configuration
 
-Plugin support github/bitbucket and custom oAuth installation.
+Plugin support github/bitbucket/google and custom oAuth installation.
 
 If you want to use github you need an application to be created https://github.com/settings/applications/new[https://github.com/settings/applications/new]. `Authorization callback URL` should be homepage of TC.
 
