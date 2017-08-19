@@ -13,8 +13,8 @@ import java.util.Optional;
 public class AuthenticationSchemeProperties {
 
     private final ConfigPresets presets;
-    private ServerSettings serverSettings;
-    private LoginConfiguration loginConfiguration;
+    private final ServerSettings serverSettings;
+    private final LoginConfiguration loginConfiguration;
 
     public AuthenticationSchemeProperties(@NotNull final ServerSettings serverSettings, @NotNull final LoginConfiguration loginConfiguration) {
         this.serverSettings = serverSettings;
@@ -28,7 +28,7 @@ public class AuthenticationSchemeProperties {
     }
 
     @Nullable
-    public String getPreset() {
+    private String getPreset() {
         return getProperty(ConfigKey.preset);
     }
 

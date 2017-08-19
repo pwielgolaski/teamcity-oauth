@@ -30,57 +30,58 @@
     })();
 </script>
 <div>
-    <label width="100%" for="${config.pre}">Preset:</label>
+    <label for="${config.pre}">Preset:</label>
     <prop:selectProperty name="<%=ConfigKey.preset.toString()%>"
                          id="<%=ConfigKey.preset.toString()%>"
                          multiple="false"
                          onchange="BS.TeamCityOAuth.selectPresetType()">
         <prop:option value="github">GitHub</prop:option>
         <prop:option value="bitbucket">Bitbucket</prop:option>
+        <prop:option value="google">Google</prop:option>
         <prop:option value="custom">Custom</prop:option>
     </prop:selectProperty><br/>
     <span class="grayNote">Preset settings</span>
 </div>
 <div id="oauth_server_settings">
     <div>
-        <label width="100%" for="<%=ConfigKey.authorizeEndpoint%>">OAuth 2.0 authorization endpoint:</label><br/>
+        <label for="<%=ConfigKey.authorizeEndpoint%>">OAuth 2.0 authorization endpoint:</label><br/>
         <prop:textProperty style="width: 100%;" name="<%=ConfigKey.authorizeEndpoint.toString()%>"/><br/>
         <span class="grayNote">Endpoint at which TeamCity server can obtain an authorization code using OAuth 2.0.</span>
     </div>
     <div>
-        <label width="100%" for="<%=ConfigKey.tokenEndpoint%>">OAuth 2.0 token endpoint:</label><br/>
+        <label for="<%=ConfigKey.tokenEndpoint%>">OAuth 2.0 token endpoint:</label><br/>
         <prop:textProperty style="width: 100%;" name="<%=ConfigKey.tokenEndpoint.toString()%>"/><br/>
         <span class="grayNote">Endpoint at which TeamCity server can obtain an token using OAuth 2.0.</span>
     </div>
     <div>
-        <label width="100%" for="<%=ConfigKey.userEndpoint%>">OAuth 2.0 user endpoint:</label><br/>
+        <label for="<%=ConfigKey.userEndpoint%>">OAuth 2.0 user endpoint:</label><br/>
         <prop:textProperty style="width: 100%;" name="<%=ConfigKey.userEndpoint.toString()%>"/><br/>
         <span class="grayNote">Endpoint at which TeamCity server can obtain information about user</span>
     </div>
 </div>
 <div>
-    <label width="100%" for="<%=ConfigKey.clientId%>">Client ID:</label><br/>
+    <label for="<%=ConfigKey.clientId%>">Client ID:</label><br/>
     <prop:textProperty style="width: 100%;" name="<%=ConfigKey.clientId.toString()%>"/><br/>
     <span class="grayNote">OAuth client identifier of this TeamCity server.</span>
 </div>
 <div>
-    <label width="100%" for="<%=ConfigKey.clientSecret%>">Client Secret:</label><br/>
+    <label for="<%=ConfigKey.clientSecret%>">Client Secret:</label><br/>
     <prop:textProperty style="width: 100%;" name="<%=ConfigKey.clientSecret.toString()%>"/><br/>
     <span class="grayNote">OAuth client secret of this TeamCity server.</span>
 </div>
 <div>
-    <label width="100%" for="<%=ConfigKey.scope%>">Scope:</label><br/>
+    <label for="<%=ConfigKey.scope%>">Scope:</label><br/>
     <prop:textProperty style="width: 100%;" name="<%=ConfigKey.scope.toString()%>"/><br/>
     <span class="grayNote">OAuth scope of this TeamCity server.</span>
 </div>
 <div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.hideLoginForm.toString()%>"/>
-    <label width="100%" for="<%=ConfigKey.hideLoginForm%>">Hide login form</label><br/>
+    <label for="<%=ConfigKey.hideLoginForm%>">Hide login form</label><br/>
     <span class="grayNote">Hide user/password login form on Teamcity login page.</span>
 </div>
 <div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.allowInsecureHttps.toString()%>"/>
-    <label width="100%" for="<%=ConfigKey.allowInsecureHttps%>">Insecure https</label><br/>
+    <label for="<%=ConfigKey.allowInsecureHttps%>">Insecure https</label><br/>
     <span class="grayNote">Allow insecure https access like invalid certificate</span>
 </div>
 <script type="text/javascript">

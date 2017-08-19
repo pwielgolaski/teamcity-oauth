@@ -5,13 +5,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class OAuthUser {
-    public static final String[] IDS_LIST = new String[]{"login", "username", "id"};
-    public static final String[] NAMES_LIST = new String[]{"name", "display_name"};
-    public static final String[] EMAIL_LIST = new String[]{"email"};
+    private static final String[] IDS_LIST = new String[]{"login", "username", "id"};
+    private static final String[] NAMES_LIST = new String[]{"name", "display_name"};
+    private static final String[] EMAIL_LIST = new String[]{"email"};
 
-    private String id;
-    private String name;
-    private String email;
+    private final String id;
+    private final String name;
+    private final String email;
 
     public OAuthUser(String id) {
         this(id, null, null);
@@ -56,12 +56,10 @@ public class OAuthUser {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("OAuthUser{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", email='").append(email).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "OAuthUser{" + "id='" + getId() + '\'' +
+                ", name='" + getName() + '\'' +
+                ", email='" + getEmail() + '\'' +
+                '}';
     }
 
     @Override

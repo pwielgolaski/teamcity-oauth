@@ -24,6 +24,7 @@ class OAuthUserTest extends Specification {
         location                        || expectedId             | expectedName
         "classpath:user/github.json"    || 'pwielgolaski'         | 'Piotr Wielgolaski'
         "classpath:user/bitbucket.json" || 'pwielgolaski'         | 'Piotr Wielgolaski'
+        "classpath:user/google.json"    || 'superemail@gmail.com' | 'Piotr Wielgołaski'
     }
 
     def "should return name if id is not given"() {

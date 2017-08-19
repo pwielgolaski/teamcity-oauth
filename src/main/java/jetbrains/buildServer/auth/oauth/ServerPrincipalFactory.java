@@ -28,7 +28,7 @@ public class ServerPrincipalFactory {
             LOG.info("Use existing user: " + user.getId());
             return existingPrincipal;
         }
-
+        LOG.info("Creating user: " + user);
         SUser created = userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.getId());
         created.setUserProperty(PluginConstants.ID_USER_PROPERTY_KEY, user.getId());
         created.updateUserAccount(user.getId(), user.getName(), user.getEmail());

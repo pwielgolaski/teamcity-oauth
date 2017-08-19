@@ -10,9 +10,9 @@ import javax.net.ssl.X509TrustManager;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-public class HttpClientFactory {
+class HttpClientFactory {
 
-    public static OkHttpClient createClient(boolean allowInsecure) {
+    static OkHttpClient createClient(boolean allowInsecure) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         if (allowInsecure) {
             builder.hostnameVerifier((s, sslSession) -> true)

@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class OAuthClient {
 
-    private AuthenticationSchemeProperties properties;
+    private final AuthenticationSchemeProperties properties;
     private static final Logger log = Logger.getLogger(OAuthClient.class);
     private final Map<Boolean, OkHttpClient> httpClients = new HashMap<>();
 
