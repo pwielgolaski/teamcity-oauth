@@ -1,7 +1,6 @@
 package jetbrains.buildServer.auth.oauth
 
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationResult
-import jetbrains.buildServer.serverSide.auth.LoginConfiguration
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import spock.lang.Specification
@@ -20,7 +19,11 @@ class OAuthAuthenticationSchemeTest extends Specification {
     def setup() {
         PluginDescriptor pluginDescriptor = Mock()
         ServerPrincipalFactory principalFactory = Mock() {
-            getServerPrincipal(_) >> { OAuthUser user -> new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) }
+            getServerPrincipal(_, _) >> { OAuthUser user, boolean allow ->
+                if (allow)
+                    Optional.of(new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id))
+                else Optional.empty()
+            }
         }
         scheme = new OAuthAuthenticationScheme(pluginDescriptor, principalFactory, client)
     }
@@ -105,6 +108,22 @@ class OAuthAuthenticationSchemeTest extends Specification {
         then:
         result.type == HttpAuthenticationResult.Type.AUTHENTICATED
         result.principal.name == "testUser"
+    }
+
+    def "don't authenticate user if allow to create new account is disabled"() {
+        given:
+        HttpServletRequest req = Mock() {
+            getParameter(OAuthAuthenticationScheme.CODE) >> "code"
+            getParameter(OAuthAuthenticationScheme.STATE) >> "state"
+            getRequestedSessionId() >> "state"
+        }
+        client.getAccessToken("code") >> "token"
+        client.getUserData("token") >> new OAuthUser("testUser")
+        when:
+        HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [allowCreatingNewUsersByLogin: false])
+        then:
+        result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
+        1 * res.sendError(401, 'Marked request as unauthenticated since user could not be created.')
     }
 
 }

@@ -3,6 +3,7 @@ package jetbrains.buildServer.auth.oauth;
 import com.google.common.base.Strings;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationResult;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationSchemeAdapter;
+import jetbrains.buildServer.serverSide.auth.AuthModuleUtil;
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.apache.log4j.Logger;
@@ -15,11 +16,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
 
     private static final Logger LOG = Logger.getLogger(OAuthAuthenticationScheme.class);
+    private static final boolean DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN = true;
     public static final String CODE = "code";
     public static final String STATE = "state";
 
@@ -83,16 +86,26 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         if (user.getId() == null) {
             return sendBadRequest(response, "Marked request as unauthenticated since user endpoint does not return any login id");
         }
+        boolean allowCreatingNewUsersByLogin = AuthModuleUtil.allowCreatingNewUsersByLogin(schemeProperties, DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN);
+        final Optional<ServerPrincipal> principal = principalFactory.getServerPrincipal(user, allowCreatingNewUsersByLogin);
 
-        final ServerPrincipal principal = principalFactory.getServerPrincipal(user);
-
-        LOG.debug("Request authenticated. Determined user " + principal.getName());
-        return HttpAuthenticationResult.authenticated(principal, true);
+        if (principal.isPresent()) {
+            LOG.debug("Request authenticated. Determined user " + principal.get().getName());
+            return HttpAuthenticationResult.authenticated(principal.get(), true);
+        } else {
+            return sendUnauthorizedRequest(response, "Marked request as unauthenticated since user could not be created.");
+        }
     }
 
     private HttpAuthenticationResult sendBadRequest(HttpServletResponse response, String reason) throws IOException {
         LOG.warn(reason);
         response.sendError(HttpStatus.BAD_REQUEST.value(), reason);
+        return HttpAuthenticationResult.unauthenticated();
+    }
+
+    private HttpAuthenticationResult sendUnauthorizedRequest(HttpServletResponse response, String reason) throws IOException {
+        LOG.warn(reason);
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), reason);
         return HttpAuthenticationResult.unauthenticated();
     }
 }
