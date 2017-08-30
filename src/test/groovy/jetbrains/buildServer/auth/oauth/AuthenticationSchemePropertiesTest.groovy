@@ -16,6 +16,7 @@ class AuthenticationSchemePropertiesTest extends Specification {
         }
         LoginConfiguration loginConfiguration = Mock() {
             getConfiguredAuthModules(_) >> [authModule]
+            isGuestLoginAllowed() >> true
         }
         ServerSettings serverSettings = Mock() {
             getRootUrl() >> 'rooturl'
@@ -100,5 +101,10 @@ class AuthenticationSchemePropertiesTest extends Specification {
         configuration[ConfigKey.authorizeEndpoint.toString()] = 'http://localhost:8080/oauth/authorize'
         expect:
         schemeProperties.getAuthorizeEndpoint() == 'https://github.com/login/oauth/authorize'
+    }
+
+    def "read isGuestLoginAllowed"() {
+        expect:
+        schemeProperties.isGuestLoginAllowed() == true
     }
 }

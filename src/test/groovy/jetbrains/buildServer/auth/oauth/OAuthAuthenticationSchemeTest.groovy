@@ -60,7 +60,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(400, "Marked request as unauthenticated since retrieved 'state' doesn't correspond to current TeamCity session.")
+        1 * res.sendError(401, "Unauthenticated since retrieved 'state' doesn't correspond to current TeamCity session.")
     }
 
 
@@ -75,7 +75,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(400, "Marked request as unauthenticated since failed to fetch token for code 'code' and state 'state'.")
+        1 * res.sendError(401, "Unauthenticated since failed to fetch token for code 'code' and state 'state'.")
     }
 
     def "handle as unauthenticated if user data are not valid"() {
@@ -91,7 +91,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(400, "Marked request as unauthenticated since user endpoint does not return any login id")
+        1 * res.sendError(401, "Unauthenticated since user endpoint does not return any login id")
     }
 
     def "authenticate user"() {
@@ -123,7 +123,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [allowCreatingNewUsersByLogin: false])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(401, 'Marked request as unauthenticated since user could not be created.')
+        1 * res.sendError(401, 'Unauthenticated since user could not be found or created.')
     }
 
 }
