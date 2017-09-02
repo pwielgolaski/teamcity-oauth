@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
         classpath 'pl.allegro.tech.build:axion-release-plugin:1.4.1'
-        classpath 'com.github.rodm:gradle-teamcity-plugin:0.8.1'
+        classpath 'com.github.rodm:gradle-teamcity-plugin:1.0'
     }
 }
 
@@ -31,7 +31,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    teamcityVersion = '10.0.2'
+    teamcityVersion = '2017.1'
     teamcityDir = "$rootDir/servers/TeamCity-${teamcityVersion}"
     teamcityDataDir = "$rootDir/data/"
     teamcityJavaHome = System.properties['java.home']
@@ -51,23 +51,26 @@ dependencies {
 
 teamcity {
     version = teamcityVersion
-
-    descriptor {
-        name = project.name
-        displayName = project.name
-        version = project.version
-        vendorName = 'wielgolaski.me'
-        description = 'oAuth2 authentication plugin'
-        downloadUrl = 'https://github.com/pwielgolaski/teamcity-oauth/'
-        email = 'pwielgolaski@gmail.com'
+    server {
+        descriptor {
+            name = project.name
+            displayName = project.name
+            version = project.version
+            vendorName = 'wielgolaski.me'
+            description = 'oAuth2 authentication plugin'
+            downloadUrl = 'https://github.com/pwielgolaski/teamcity-oauth/'
+            email = 'pwielgolaski@gmail.com'
+        }
     }
-
-    homeDir = file(teamcityDir)
-    dataDir = file(teamcityDataDir)
-    javaHome = file(teamcityJavaHome)
+    environments {
+        teamcity {
+            version = teamcityVersion
+            homeDir = file(teamcityDir)
+            dataDir = file(teamcityDataDir)
+            javaHome = file(teamcityJavaHome)
+        }
+    }
 }
-
-deployPlugin.dependsOn assemble
 
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')

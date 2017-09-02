@@ -1,6 +1,6 @@
 package jetbrains.buildServer.auth.oauth;
 
-import com.google.common.base.Strings;
+import com.intellij.openapi.util.text.StringUtil;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationResult;
 import jetbrains.buildServer.controllers.interceptors.auth.HttpAuthenticationSchemeAdapter;
 import jetbrains.buildServer.controllers.interceptors.auth.util.HttpAuthUtil;
@@ -70,7 +70,7 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         String code = request.getParameter(CODE);
         String state = request.getParameter(STATE);
 
-        if (Strings.isNullOrEmpty(code) || Strings.isNullOrEmpty(state))
+        if (StringUtil.isEmpty(code) || StringUtil.isEmpty(state))
             return HttpAuthenticationResult.notApplicable();
 
         LOG.debug(String.format("oAuth response with code '%s' & state '%s'", code, state));
