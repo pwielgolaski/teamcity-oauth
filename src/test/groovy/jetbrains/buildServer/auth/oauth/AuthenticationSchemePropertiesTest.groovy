@@ -1,6 +1,6 @@
 package jetbrains.buildServer.auth.oauth
 
-import jetbrains.buildServer.serverSide.ServerSettings
+import jetbrains.buildServer.serverSide.SBuildServer
 import jetbrains.buildServer.serverSide.auth.AuthModule
 import jetbrains.buildServer.serverSide.auth.LoginConfiguration
 import spock.lang.Specification
@@ -18,10 +18,10 @@ class AuthenticationSchemePropertiesTest extends Specification {
             getConfiguredAuthModules(_) >> [authModule]
             isGuestLoginAllowed() >> true
         }
-        ServerSettings serverSettings = Mock() {
+        SBuildServer sBuildServer = Mock() {
             getRootUrl() >> 'rooturl'
         }
-        schemeProperties = new AuthenticationSchemeProperties(serverSettings, loginConfiguration)
+        schemeProperties = new AuthenticationSchemeProperties(sBuildServer, loginConfiguration)
     }
 
     def "configuration read root url"() {

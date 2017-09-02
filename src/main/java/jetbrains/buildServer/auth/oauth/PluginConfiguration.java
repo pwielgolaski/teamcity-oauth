@@ -1,7 +1,7 @@
 package jetbrains.buildServer.auth.oauth;
 
 import jetbrains.buildServer.controllers.AuthorizationInterceptor;
-import jetbrains.buildServer.serverSide.ServerSettings;
+import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.auth.LoginConfiguration;
 import jetbrains.buildServer.users.UserModel;
 import jetbrains.buildServer.web.openapi.PagePlaces;
@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class PluginConfiguration {
 
     @Bean
-    public AuthenticationSchemeProperties authenticationSchemeProperties(ServerSettings serverSettings, LoginConfiguration loginConfiguration) {
-        return new AuthenticationSchemeProperties(serverSettings, loginConfiguration);
+    public AuthenticationSchemeProperties authenticationSchemeProperties(SBuildServer sBuildServer, LoginConfiguration loginConfiguration) {
+        return new AuthenticationSchemeProperties(sBuildServer, loginConfiguration);
     }
 
     @Bean
