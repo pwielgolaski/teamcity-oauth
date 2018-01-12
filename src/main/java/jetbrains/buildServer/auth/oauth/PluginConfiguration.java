@@ -47,8 +47,9 @@ public class PluginConfiguration {
     public OAuthAuthenticationScheme oAuthAuthenticationScheme(LoginConfiguration loginConfiguration,
                                                         PluginDescriptor pluginDescriptor,
                                                         ServerPrincipalFactory principalFactory,
-                                                        OAuthClient authClient) {
-        OAuthAuthenticationScheme authenticationScheme = new OAuthAuthenticationScheme(pluginDescriptor, principalFactory, authClient);
+                                                        OAuthClient authClient,
+                                                        AuthenticationSchemeProperties schemeProperties) {
+        OAuthAuthenticationScheme authenticationScheme = new OAuthAuthenticationScheme(pluginDescriptor, principalFactory, authClient, schemeProperties);
         loginConfiguration.registerAuthModuleType(authenticationScheme);
         return authenticationScheme;
     }

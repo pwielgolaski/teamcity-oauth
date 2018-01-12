@@ -40,7 +40,7 @@ public class ServerPrincipalFactory {
         }
     }
 
-    @Nullable
+    @NotNull
     private Optional<ServerPrincipal> findExistingPrincipal(@NotNull final String userName) {
         try {
             final SUser user = userModel.findUserByUsername(userName, PluginConstants.ID_USER_PROPERTY_KEY);
