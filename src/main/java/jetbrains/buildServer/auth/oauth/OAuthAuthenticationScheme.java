@@ -30,13 +30,16 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
     private final PluginDescriptor pluginDescriptor;
     private final ServerPrincipalFactory principalFactory;
     private final OAuthClient authClient;
+    private final AuthenticationSchemeProperties properties;
 
     public OAuthAuthenticationScheme(@NotNull final PluginDescriptor pluginDescriptor,
                                      @NotNull final ServerPrincipalFactory principalFactory,
-                                     @NotNull final OAuthClient authClient) {
+                                     @NotNull final OAuthClient authClient,
+                                     @NotNull final AuthenticationSchemeProperties properties) {
         this.pluginDescriptor = pluginDescriptor;
         this.principalFactory = principalFactory;
         this.authClient = authClient;
+        this.properties = properties;
     }
 
     @NotNull
@@ -86,6 +89,15 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         OAuthUser user = authClient.getUserData(token);
         if (user.getId() == null) {
             return sendUnauthorizedRequest(request, response, "Unauthenticated since user endpoint does not return any login id");
+        }
+        String emailDomain = properties.getEmailDomain();
+        if (!(emailDomain == null || emailDomain.isEmpty())) {
+            if (!emailDomain.startsWith("@")) {
+                emailDomain = "@" + emailDomain;
+            }
+            if (user.getEmail() == null || !user.getEmail().endsWith(emailDomain)) {
+                return sendUnauthorizedRequest(request, response, "Unauthenticated since user email is not " + emailDomain);
+            }
         }
         boolean allowCreatingNewUsersByLogin = AuthModuleUtil.allowCreatingNewUsersByLogin(schemeProperties, DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN);
         final Optional<ServerPrincipal> principal = principalFactory.getServerPrincipal(user, allowCreatingNewUsersByLogin);

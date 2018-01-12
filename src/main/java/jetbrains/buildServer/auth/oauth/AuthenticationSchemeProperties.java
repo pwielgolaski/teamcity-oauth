@@ -62,6 +62,11 @@ public class AuthenticationSchemeProperties {
         return getProperty(ConfigKey.scope);
     }
 
+    @Nullable
+    public String getEmailDomain() {
+        return getProperty(ConfigKey.emailDomain);
+    }
+
     public boolean isHideLoginForm() {
         return Boolean.valueOf(getProperty(ConfigKey.hideLoginForm));
     }

@@ -7,20 +7,19 @@ image:./docs/login-screen.png[Login Screen]
 = Installation
 
 Grab latest version of plugin from link image:https://api.bintray.com/packages/pwielgolaski/generic/teamcity-oauth/images/download.svg[link="https://bintray.com/pwielgolaski/generic/teamcity-oauth/_latestVersion"]
-
 and install it to Teamcity following https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins[https://confluence.jetbrains.com/display/TCD10/Installing+Additional+Plugins]
 
 = Configuration
 
 Plugin support authentication using:
 
-* github
-* bitbucket
-* google
-* custom oAuth server.
+* GitHub
+* Bitbucket
+* Google
+* any custom oAuth server
 
 
-If you want to use github you need an application to be created https://github.com/settings/applications/new[https://github.com/settings/applications/new]. `Authorization callback URL` should be homepage of TC.
+If you want to use GitHub you need an application to be created https://github.com/settings/applications/new[https://github.com/settings/applications/new]. `Authorization callback URL` should be homepage of TC.
 
 Login as administrator and go to Administration &gt; Authentication
 
@@ -28,11 +27,13 @@ Switch to advanced mode and add module HTTP-OAUTH.v2.
 
 image:./docs/config-screen.png[Configuration Screen]
 
-You need to specify your client id and client secret.
-Also you need to specific scope, `user` is fine for github, 'account' for bitbucket.
+You need to specify your client id, client secret and scope.
+For GitHub, `user` scope is appropriate, `account` for Bitbucket, and `profile email` for Google.
 
-If you dont choose "Allow creating new users on the first login" only users that already exists in Teamcity can login.
+If you don't enable "Allow creating new users on the first login" only users that already exist in Teamcity can login.
 It means that you need account with the same name as user login name in oauth.
+
+If you specify an "Email Domain", only users whose email is at that domain will be able to log in.
 
 You can decide if you want to hide user/password form on login screen (worth leaving unchecked when you test it).
 

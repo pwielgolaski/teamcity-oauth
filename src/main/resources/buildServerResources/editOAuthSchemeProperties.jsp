@@ -75,6 +75,11 @@
     <span class="grayNote">OAuth scope of this TeamCity server.</span>
 </div>
 <div>
+    <label for="<%=ConfigKey.emailDomain%>">Email Domain:</label><br/>
+    <prop:textProperty style="width: 100%;" name="<%=ConfigKey.emailDomain.toString()%>"/><br/>
+    <span class="grayNote">Authorize only users with emails at this domain (optional).</span>
+</div>
+<div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.hideLoginForm.toString()%>"/>
     <label for="<%=ConfigKey.hideLoginForm%>">Hide login form</label><br/>
     <span class="grayNote">Hide user/password login form on Teamcity login page.</span>
