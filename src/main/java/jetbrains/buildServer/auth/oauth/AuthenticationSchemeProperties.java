@@ -28,7 +28,7 @@ public class AuthenticationSchemeProperties {
     }
 
     @Nullable
-    private String getPreset() {
+    public String getPreset() {
         return getProperty(ConfigKey.preset);
     }
 
@@ -65,6 +65,11 @@ public class AuthenticationSchemeProperties {
     @Nullable
     public String getEmailDomain() {
         return getProperty(ConfigKey.emailDomain);
+    }
+
+    @Nullable
+    public String getOrganizations() {
+        return getProperty(ConfigKey.organizations);
     }
 
     public boolean isHideLoginForm() {

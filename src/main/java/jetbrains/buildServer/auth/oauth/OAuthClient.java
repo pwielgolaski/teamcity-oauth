@@ -69,6 +69,11 @@ public class OAuthClient {
                 .build();
         String response = getHttpClient().newCall(request).execute().body().string();
         log.debug("Fetched user data: " + response);
-        return new OAuthUser((Map) JSONValue.parse(response));
+        Map parsedResponse = (Map) JSONValue.parse(response);
+        if ( (properties.getPreset()).equals("github")) {
+          return new GithubUser(parsedResponse, token, properties.isAllowInsecureHttps());
+        } else {
+          return new OAuthUser(parsedResponse);
+        }
     }
 }
