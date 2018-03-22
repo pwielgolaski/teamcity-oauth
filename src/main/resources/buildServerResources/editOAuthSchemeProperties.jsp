@@ -16,6 +16,7 @@
             selectPresetType: function () {
                 this.selectedPreset = this.selector.val();
                 this.onTypeChanged();
+                this.displayOrganizations();
             },
             onTypeChanged: function () {
                 var isCustom = (this.selectedPreset === 'custom'),
@@ -25,6 +26,15 @@
                 } else {
                     settings.hide();
                 }
+            },
+            displayOrganizations: function() {
+              var isGithub = (this.selectedPreset === 'github'),
+                orgs = $j('#github_organizations');
+              if (isGithub) {
+                orgs.show();
+              } else {
+                orgs.hide();
+              }
             }
         };
     })();
@@ -78,6 +88,11 @@
     <label for="<%=ConfigKey.emailDomain%>">Email Domain:</label><br/>
     <prop:textProperty style="width: 100%;" name="<%=ConfigKey.emailDomain.toString()%>"/><br/>
     <span class="grayNote">Authorize only users with emails at this domain (optional).</span>
+</div>
+<div id="github_organizations">
+    <label for="<%=ConfigKey.organizations%>">Organizations:</label><br/>
+    <prop:textProperty style="width: 100%;" name="<%=ConfigKey.organizations.toString()%>"/><br/>
+    <span class="grayNote">Authorize only users who belongs to these organizations (optional). Please separate the organizations by comma. </span>
 </div>
 <div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.hideLoginForm.toString()%>"/>

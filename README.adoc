@@ -35,6 +35,8 @@ It means that you need account with the same name as user login name in oauth.
 
 If you specify an "Email Domain", only users whose email is at that domain will be able to log in.
 
+If you specify a value in "Organizations", only users with the specified organizations will be authenticated. You can specify more than one organization by separating them with a comma.
+
 You can decide if you want to hide user/password form on login screen (worth leaving unchecked when you test it).
 
 You can consider to disable also "Allow user registration from the login page" in "Built-in" module.
