@@ -59,6 +59,7 @@ teamcity {
             vendorName = 'wielgolaski.me'
             description = 'oAuth2 authentication plugin'
             downloadUrl = 'https://github.com/pwielgolaski/teamcity-oauth/'
+            vendorUrl = 'https://github.com/pwielgolaski/teamcity-oauth/'
             email = 'pwielgolaski@gmail.com'
         }
     }
