@@ -180,15 +180,13 @@ class OAuthAuthenticationSchemeTest extends Specification {
     }
 
     def "authenticate user when user's organization match the specified organization"() {
-      given:
+        given:
         HttpServletRequest req = Mock() {
             getParameter(OAuthAuthenticationScheme.CODE) >> "code"
             getParameter(OAuthAuthenticationScheme.STATE) >> "state"
             getRequestedSessionId() >> "state"
         }
-        GithubUser githubUser = Mock()
-        githubUser.getId() >> "sample-test"
-        githubUser.getOrganizations() >> ["test-org"]
+        GithubUser githubUser = new GithubUser([id: "sample-test"], { '[ {"login": "test-org"} ]' })
 
         client.getUserData("token") >> githubUser
         client.getAccessToken("code") >> "token"
@@ -201,15 +199,13 @@ class OAuthAuthenticationSchemeTest extends Specification {
     }
 
     def "authenticate user when no organization is specified in the settings"() {
-      given:
+        given:
         HttpServletRequest req = Mock() {
             getParameter(OAuthAuthenticationScheme.CODE) >> "code"
             getParameter(OAuthAuthenticationScheme.STATE) >> "state"
             getRequestedSessionId() >> "state"
         }
-        GithubUser githubUser = Mock()
-        githubUser.getId() >> "sample-test"
-        githubUser.getOrganizations() >> ["test-org"]
+        GithubUser githubUser = new GithubUser([id: "sample-test"], { '[ {"login": "test-org"} ]' })
 
         client.getUserData("token") >> githubUser
         client.getAccessToken("code") >> "token"
@@ -222,15 +218,13 @@ class OAuthAuthenticationSchemeTest extends Specification {
 
 
     def "dont authenticate user when user's organization does not match the specified organization"() {
-      given:
+        given:
         HttpServletRequest req = Mock() {
             getParameter(OAuthAuthenticationScheme.CODE) >> "code"
             getParameter(OAuthAuthenticationScheme.STATE) >> "state"
             getRequestedSessionId() >> "state"
         }
-        GithubUser githubUser = Mock()
-        githubUser.getId() >> "sample-test"
-        githubUser.getOrganizations() >> ["test-org"]
+        GithubUser githubUser = new GithubUser([id: "sample-test"], { '[ {"login": "test-org"} ]' })
 
         client.getUserData("token") >> githubUser
         client.getAccessToken("code") >> "token"
@@ -240,7 +234,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(401, "User's organization does not match with the ones specified in the Oauth settings")
+        1 * res.sendError(401, "User's organization does not match with the ones specified in the oAuth settings")
     }
 
 }

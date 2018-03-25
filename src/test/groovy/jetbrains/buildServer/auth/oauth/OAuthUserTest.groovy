@@ -6,7 +6,7 @@ import org.springframework.core.io.DefaultResourceLoader
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 class OAuthUserTest extends Specification {
 
@@ -14,7 +14,7 @@ class OAuthUserTest extends Specification {
     def "should read user details"() {
         setup:
         def file = new DefaultResourceLoader().getResource(location).file
-        def content = Files.contentOf(file, Charset.defaultCharset())
+        def content = Files.contentOf(file, StandardCharsets.UTF_8)
         when:
         def user = new OAuthUser((Map) JSONValue.parse(content))
         then:

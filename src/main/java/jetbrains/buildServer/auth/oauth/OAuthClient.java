@@ -8,6 +8,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONValue;
 import org.springframework.http.MediaType;
 
@@ -62,18 +63,31 @@ public class OAuthClient {
         return (String) jsonResponse.get("access_token");
     }
 
-    public OAuthUser getUserData(String token) throws IOException {
-        Request request = new Request.Builder()
-                .url(properties.getUserEndpoint())
-                .addHeader("Authorization","Bearer " + token)
-                .build();
-        String response = getHttpClient().newCall(request).execute().body().string();
+    public OAuthUser getUserData(String token) {
+        String response = authenticatedGETCall(properties.getUserEndpoint(), token);
         log.debug("Fetched user data: " + response);
         Map parsedResponse = (Map) JSONValue.parse(response);
-        if ( (properties.getPreset()).equals("github")) {
-          return new GithubUser(parsedResponse, token, properties.isAllowInsecureHttps());
+        return createUser(token, parsedResponse);
+    }
+
+    private String authenticatedGETCall(String endpoint, String token)  {
+        try {
+            Request request = new Request.Builder()
+                    .url(endpoint)
+                    .addHeader("Authorization", "Bearer " + token)
+                    .build();
+            return getHttpClient().newCall(request).execute().body().string();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @NotNull
+    private OAuthUser createUser(String token, Map parsedResponse) {
+        if ("github".equals(properties.getPreset())) {
+            return new GithubUser(parsedResponse, () -> authenticatedGETCall(GithubUser.ORGANIZATION_ENDPOINT, token));
         } else {
-          return new OAuthUser(parsedResponse);
+            return new OAuthUser(parsedResponse);
         }
     }
 }

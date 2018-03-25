@@ -90,40 +90,12 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         }
 
         OAuthUser user = authClient.getUserData(token);
-        if (user.getId() == null) {
-            return sendUnauthorizedRequest(request, response, "Unauthenticated since user endpoint does not return any login id");
+        try {
+            user.validate(properties);
+        } catch (Exception ex) {
+            return sendUnauthorizedRequest(request, response, ex.getMessage());
         }
-        String emailDomain = properties.getEmailDomain();
-        if (!(emailDomain == null || emailDomain.isEmpty())) {
-            if (!emailDomain.startsWith("@")) {
-                emailDomain = "@" + emailDomain;
-            }
-            if (user.getEmail() == null || !user.getEmail().endsWith(emailDomain)) {
-                return sendUnauthorizedRequest(request, response, "Unauthenticated since user email is not " + emailDomain);
-            }
-        }
-        // Check the organizations that the user belongs to for Github Oauth
-        if (GithubUser.class.isInstance(user) ) {
-          String orgs = properties.getOrganizations();
-          if(!(orgs == null || orgs.isEmpty())) {
-            String[] configuredOrganizations = orgs.split(",");
-            Arrays.parallelSetAll(configuredOrganizations, (i) -> configuredOrganizations[i].trim());
-            String[] userOrganizations = ((GithubUser) user).getOrganizations();
 
-            Set<String> userOrganizationsSet = new HashSet<String>(Arrays.asList(userOrganizations));
-            Set<String> configuredOrganizationsSet = new HashSet<String>(Arrays.asList(configuredOrganizations));
-            Set<String> matchedOrganizationsSet = new HashSet<String>();
-
-            for (String organization:configuredOrganizationsSet) {
-              if (userOrganizationsSet.contains(organization)) {
-                matchedOrganizationsSet.add(organization);
-              }
-            }
-            if(matchedOrganizationsSet == null || matchedOrganizationsSet.size() == 0) {
-              return sendUnauthorizedRequest(request, response, "User's organization does not match with the ones specified in the Oauth settings");
-            }
-          }
-        }
         boolean allowCreatingNewUsersByLogin = AuthModuleUtil.allowCreatingNewUsersByLogin(schemeProperties, DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN);
         final Optional<ServerPrincipal> principal = principalFactory.getServerPrincipal(user, allowCreatingNewUsersByLogin);
 

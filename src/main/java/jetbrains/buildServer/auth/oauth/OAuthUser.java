@@ -1,5 +1,7 @@
 package jetbrains.buildServer.auth.oauth;
 
+import com.intellij.openapi.util.text.StringUtil;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,6 +54,21 @@ public class OAuthUser {
 
     public String getEmail() {
         return email;
+    }
+
+    public void validate(AuthenticationSchemeProperties properties) throws Exception {
+        if (this.getId() == null) {
+            throw new Exception("Unauthenticated since user endpoint does not return any login id");
+        }
+        String emailDomain = properties.getEmailDomain();
+        if (StringUtil.isNotEmpty(emailDomain)) {
+            if (!emailDomain.startsWith("@")) {
+                emailDomain = "@" + emailDomain;
+            }
+            if (this.getEmail() == null || !this.getEmail().endsWith(emailDomain)) {
+                throw new Exception("Unauthenticated since user email is not " + emailDomain);
+            }
+        }
     }
 
     @Override

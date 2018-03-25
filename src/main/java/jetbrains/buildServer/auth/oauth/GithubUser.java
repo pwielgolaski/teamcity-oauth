@@ -1,46 +1,63 @@
 package jetbrains.buildServer.auth.oauth;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import org.json.simple.JSONValue;
+import com.intellij.openapi.util.text.StringUtil;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.io.IOException;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GithubUser extends OAuthUser {
 
-  private static final String ORGANIZATION_ENDPOINT = "https://api.github.com/user/orgs";
-  private final Map<Boolean, OkHttpClient> httpClients = new HashMap<>();
-  private final String[] organizations;
+    private static final Logger log = Logger.getLogger(GithubUser.class);
+    public static final String ORGANIZATION_ENDPOINT = "https://api.github.com/user/orgs";
+    private final Supplier<String> organizationSupplier;
 
-  public GithubUser(Map userData, String token, Boolean allowInsecureHttps) throws IOException {
-      super(userData);
-      this.organizations = fetchUserOrganizations(token, allowInsecureHttps);
-  }
+    public GithubUser(Map userData, Supplier<String> organizationSupplier) {
+        super(userData);
+        this.organizationSupplier = organizationSupplier;
+    }
 
-  public String[] getOrganizations() {
-      return organizations;
-  }
+    private Set<String> fetchUserOrganizations() {
+        String response = organizationSupplier.get();
+        log.debug("Fetched user org data: " + response);
+        Object parsedResponse = JSONValue.parse(response);
+        if (parsedResponse instanceof JSONArray) {
+            return ((List<Object>) parsedResponse)
+                    .stream()
+                    .filter(item -> item instanceof JSONObject)
+                    .map(item -> ((JSONObject) item).get("login"))
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .collect(Collectors.toSet());
+        } else {
+            String message = ((JSONObject) parsedResponse).getOrDefault("message", "Incorrect response:" + response ).toString();
+            throw new IllegalStateException(message);
+        }
+    }
 
-  private String[] fetchUserOrganizations(String token, Boolean allowInsecureHttps) throws IOException { 
-      Request orgRequest = new Request.Builder()
-            .url(ORGANIZATION_ENDPOINT)
-            .addHeader("Authorization","Bearer " + token)
-            .build();
-      String response = getHttpClient(allowInsecureHttps).newCall(orgRequest).execute().body().string();
-      JSONArray parsedResponse = (JSONArray) JSONValue.parse(response);
-      String[] orgs = new String[parsedResponse.size()];
-      for(int i = 0; i < parsedResponse.size(); i++) {
-        JSONObject value = (JSONObject) parsedResponse.get(i);
-        orgs[i] = (String) value.get("login");
-      }
-      return orgs;
-  }
+    @Override
+    public void validate(AuthenticationSchemeProperties properties) throws Exception {
+        super.validate(properties);
+        // Check the organizations that the user belongs to for Github Oauth
+        String orgs = properties.getOrganizations();
+        if (StringUtil.isNotEmpty(orgs)) {
+            Set<String> userOrganizations = this.fetchUserOrganizations();
+            Set<String> configuredOrganizations = Stream.of(orgs.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
 
-  private OkHttpClient getHttpClient(Boolean allowInsecureHttps) {
-      return httpClients.computeIfAbsent(allowInsecureHttps, HttpClientFactory::createClient);
-  }
+            configuredOrganizations.retainAll(userOrganizations);
+            if (configuredOrganizations.isEmpty()) {
+                throw new Exception("User's organization does not match with the ones specified in the oAuth settings");
+            }
+        }
+    }
 }
