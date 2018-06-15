@@ -22,6 +22,11 @@ class ConfigPresets {
                 "https://accounts.google.com/o/oauth2/v2/auth",
                 "https://www.googleapis.com/oauth2/v4/token",
                 "https://www.googleapis.com/oauth2/v3/userinfo");
+        installPreset("azure",
+                "https://login.microsoftonline.com/oauth2/v2.0/authorize",
+                "https://login.microsoftonline.com/oauth2/v2.0/token",
+                "https://graph.microsoft.com/v1.0/me");
+
     }
 
     private void installPreset(String name, String authorizeEndpoint, String tokenEndpoint, String userEndpoint) {

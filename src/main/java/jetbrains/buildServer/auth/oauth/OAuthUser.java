@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public class OAuthUser {
     private static final String[] IDS_LIST = new String[]{"login", "username", "id"};
-    private static final String[] NAMES_LIST = new String[]{"name", "display_name"};
-    private static final String[] EMAIL_LIST = new String[]{"email"};
+    private static final String[] NAMES_LIST = new String[]{"name", "display_name", "displayName"};
+    private static final String[] EMAIL_LIST = new String[]{"email", "mail"};
 
     private final String id;
     private final String name;

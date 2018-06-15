@@ -16,10 +16,8 @@ Plugin support authentication using:
 * GitHub
 * Bitbucket
 * Google
+* Azure Active Directory
 * any custom oAuth server
-
-
-If you want to use GitHub you need an application to be created https://github.com/settings/applications/new[https://github.com/settings/applications/new]. `Authorization callback URL` should be homepage of TC.
 
 Login as administrator and go to Administration &gt; Authentication
 
@@ -28,7 +26,30 @@ Switch to advanced mode and add module HTTP-OAUTH.v2.
 image:./docs/config-screen.png[Configuration Screen]
 
 You need to specify your client id, client secret and scope.
-For GitHub, `user` scope is appropriate, `account` for Bitbucket, and `profile email` for Google.
+
+== Github
+If you want to use GitHub you need an application to be created https://github.com/settings/applications/new[https://github.com/settings/applications/new]. `Authorization callback URL` should be homepage of TeamCity.
+
+You should use the `user` scope for github
+
+== Bitbucket
+You should use the `account` scope for Bitbucket
+
+== Google
+You should use the `profile email` scope for Google
+
+== Azure
+You should create an application in Azure: https://apps.dev.microsoft.com[https://apps.dev.microsoft.com]. You need to set `Redirect URLs` to the homepage of TeamCity.
+
+You should use the `openid https://graph.microsoft.com/user.read` scope for Azure
+
+Note that by default, _any_ Microsoft live account can register with OAuth. To restrict this to a specific Active Directory instance, (find your tenant ID)[https://support.office.com/en-us/article/find-your-office-365-tenant-id-6891b561-a52d-4ade-9f39-b492285e2c9b], select `Preset: Custom` and use the following endpoints:
+
+```
+Authorization: https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize
+Token: https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token
+User: https://graph.microsoft.com/v1.0/me
+```
 
 If you don't enable "Allow creating new users on the first login" only users that already exist in Teamcity can login.
 It means that you need account with the same name as user login name in oauth.
