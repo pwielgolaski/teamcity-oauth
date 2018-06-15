@@ -25,6 +25,7 @@ class OAuthUserTest extends Specification {
         "classpath:user/github.json"    || 'pwielgolaski'         | 'Piotr Wielgolaski'
         "classpath:user/bitbucket.json" || 'pwielgolaski'         | 'Piotr Wielgolaski'
         "classpath:user/google.json"    || 'superemail@gmail.com' | 'Piotr Wielgołaski'
+        "classpath:user/azure.json"     || 'any-guid'             | 'Piotr Wielgołaski'
     }
 
     def "should return name if id is not given"() {

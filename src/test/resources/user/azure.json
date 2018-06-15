@@ -1,0 +1,14 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users/$entity",
+  "id": "any-guid",
+  "businessPhones": [],
+  "displayName": "Piotr Wielgołaski",
+  "givenName": null,
+  "jobTitle": null,
+  "mail": "piotr.wielgolaski@example.com",
+  "mobilePhone": null,
+  "officeLocation": null,
+  "preferredLanguage": null,
+  "surname": null,
+  "userPrincipalName": "piotr.wielgolaski_example.com#EXT#@any-domain.onmicrosoft.com"
+}
