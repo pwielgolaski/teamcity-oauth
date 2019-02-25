@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class OAuthUser {
-    private static final String[] IDS_LIST = new String[]{"login", "username", "id"};
+    private static final String[] IDS_LIST = new String[]{"login", "username", "id", "preferred_username"};
     private static final String[] NAMES_LIST = new String[]{"name", "display_name", "displayName"};
     private static final String[] EMAIL_LIST = new String[]{"email", "mail"};
 
