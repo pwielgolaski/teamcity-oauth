@@ -1,5 +1,6 @@
 package jetbrains.buildServer.auth.oauth;
 
+import com.intellij.openapi.util.text.StringUtil;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.auth.AuthModule;
 import jetbrains.buildServer.serverSide.auth.LoginConfiguration;
@@ -63,8 +64,8 @@ public class AuthenticationSchemeProperties {
     }
 
     @Nullable
-    public String getEmailDomain() {
-        return getProperty(ConfigKey.emailDomain);
+    public List<String> getEmailDomains() {
+        return StringUtil.split(getProperty(ConfigKey.emailDomains), " ");
     }
 
     @Nullable
