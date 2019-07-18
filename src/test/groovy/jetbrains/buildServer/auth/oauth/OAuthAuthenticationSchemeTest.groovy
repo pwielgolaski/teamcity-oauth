@@ -137,7 +137,24 @@ class OAuthAuthenticationSchemeTest extends Specification {
         }
         client.getAccessToken("code") >> "token"
         client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@example.com")
-        properties.getEmailDomain() >> "example.com"
+        properties.getEmailDomains() >> Arrays.asList("example.com")
+        when:
+        HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
+        then:
+        result.type == HttpAuthenticationResult.Type.AUTHENTICATED
+        result.principal.name == "testUser"
+    }
+
+    def "authenticate user with email matching domain list"() {
+        given:
+        HttpServletRequest req = Mock() {
+            getParameter(OAuthAuthenticationScheme.CODE) >> "code"
+            getParameter(OAuthAuthenticationScheme.STATE) >> "state"
+            getRequestedSessionId() >> "state"
+        }
+        client.getAccessToken("code") >> "token"
+        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@example.com")
+        properties.getEmailDomains() >> Arrays.asList("example.com", "@example1.com")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
@@ -154,12 +171,29 @@ class OAuthAuthenticationSchemeTest extends Specification {
         }
         client.getAccessToken("code") >> "token"
         client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@acme.com")
-        properties.getEmailDomain() >> "example.com"
+        properties.getEmailDomains() >> Arrays.asList("example.com")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(401, 'Unauthenticated since user email is not @example.com')
+        1 * res.sendError(401, 'Unauthenticated since user email is not in [example.com]')
+    }
+
+    def "don't authenticate user with email that doesn't match domain list"() {
+        given:
+        HttpServletRequest req = Mock() {
+            getParameter(OAuthAuthenticationScheme.CODE) >> "code"
+            getParameter(OAuthAuthenticationScheme.STATE) >> "state"
+            getRequestedSessionId() >> "state"
+        }
+        client.getAccessToken("code") >> "token"
+        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@acme.com")
+        properties.getEmailDomains() >> Arrays.asList("example.com", "@example1.com")
+        when:
+        HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
+        then:
+        result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
+        1 * res.sendError(401, 'Unauthenticated since user email is not in [example.com, @example1.com]')
     }
 
     def "don't authenticate user without email when domain specified"() {
@@ -171,12 +205,12 @@ class OAuthAuthenticationSchemeTest extends Specification {
         }
         client.getAccessToken("code") >> "token"
         client.getUserData("token") >> new OAuthUser("testUser")
-        properties.getEmailDomain() >> "example.com"
+        properties.getEmailDomains() >> Arrays.asList("example.com")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
         then:
         result.type == HttpAuthenticationResult.Type.UNAUTHENTICATED
-        1 * res.sendError(401, 'Unauthenticated since user email is not @example.com')
+        1 * res.sendError(401, 'Unauthenticated since user email is not in [example.com]')
     }
 
     def "authenticate user when user's organization match the specified organization"() {

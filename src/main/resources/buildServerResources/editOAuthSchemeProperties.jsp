@@ -88,7 +88,7 @@
 <div>
     <label for="<%=ConfigKey.emailDomain%>">Email Domain:</label><br/>
     <prop:textProperty style="width: 100%;" name="<%=ConfigKey.emailDomain.toString()%>"/><br/>
-    <span class="grayNote">Authorize only users with emails at this domain (optional).</span>
+    <span class="grayNote">Authorize only users with emails in these domains (optional). Please separate the domains by space.</span>
 </div>
 <div id="github_organizations">
     <label for="<%=ConfigKey.organizations%>">Organizations:</label><br/>
