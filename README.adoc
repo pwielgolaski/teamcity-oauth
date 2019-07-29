@@ -32,6 +32,13 @@ If you want to use GitHub you need an application to be created https://github.c
 
 You should use the `user` scope for github
 
+== Github Enterprise
+. OAuth 2.0 authorization endpoint should be https://git.yourcompany.com/login/oauth/authorize
+. OAuth 2.0 token endpoint should be https://git.yourcompany.com/login/oauth/access_token
+. OAuth 2.0 user endpoint should be https://git.yourcompany.com/api/v3/user  Note that the api endpoint will be specific to your implication. It could be something like https://api.yourgit.com/user  as well
+. Client Id, Client Secret, and scope are all equivalent of the github applcation above
+. Also, like above, when you create your github oauth applicaiton, your authorization callback url is just https://teamcity.yourcompany.com/
+
 == Bitbucket
 You should use the `account` scope for Bitbucket
 
