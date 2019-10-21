@@ -12,5 +12,7 @@ public enum ConfigKey {
     hideLoginForm,
     allowInsecureHttps,
     emailDomain,
-    organizations
+    organizations,
+    groups,
+    syncGroups
 }

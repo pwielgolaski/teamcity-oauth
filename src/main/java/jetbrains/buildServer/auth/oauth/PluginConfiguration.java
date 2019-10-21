@@ -1,6 +1,7 @@
 package jetbrains.buildServer.auth.oauth;
 
 import jetbrains.buildServer.controllers.AuthorizationInterceptor;
+import jetbrains.buildServer.groups.UserGroupManager;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.auth.LoginConfiguration;
 import jetbrains.buildServer.users.UserModel;
@@ -24,8 +25,8 @@ public class PluginConfiguration {
     }
 
     @Bean
-    public ServerPrincipalFactory serverPrincipalFactory(UserModel userModel) {
-        return new ServerPrincipalFactory(userModel);
+    public ServerPrincipalFactory serverPrincipalFactory(UserModel userModel, UserGroupManager userGroupManager, AuthenticationSchemeProperties properties) {
+        return new ServerPrincipalFactory(userModel, userGroupManager, properties);
     }
 
     @Bean

@@ -74,3 +74,4 @@ data/
 servers/
 downloads/
 auth-config.xml
+*.DS_Store
