@@ -3,6 +3,7 @@ package jetbrains.buildServer.auth.oauth
 import jetbrains.buildServer.serverSide.SBuildServer
 import jetbrains.buildServer.serverSide.auth.AuthModule
 import jetbrains.buildServer.serverSide.auth.LoginConfiguration
+import org.testng.collections.Lists
 import spock.lang.Specification
 
 class AuthenticationSchemePropertiesTest extends Specification {
@@ -41,6 +42,18 @@ class AuthenticationSchemePropertiesTest extends Specification {
         "true"  || true
     }
 
+    def "configuration read allow full sync groups"() {
+        setup:
+        configuration[ConfigKey.syncGroups.toString()] = value
+        expect:
+        schemeProperties.isSyncGroups() == expectedValue
+        where:
+        value   || expectedValue
+        null    || true
+        "false" || false
+        "true"  || true
+    }
+
     def "configuration read hide login dialog"() {
         setup:
         configuration[ConfigKey.hideLoginForm.toString()] = value
@@ -62,6 +75,27 @@ class AuthenticationSchemePropertiesTest extends Specification {
         schemeProperties.getClientId() == 'clientID'
         schemeProperties.getClientSecret() == 'clientSsss'
         schemeProperties.getScope() == 'scope'
+    }
+
+    def "configuration read whitelist groups with comma and no space"() {
+        given:
+        configuration[ConfigKey.groups.toString()] = 'dev-a,dev-b'
+        expect:
+        schemeProperties.getWhitelistedGroups() containsAll("dev-a", "dev-b")
+    }
+
+    def "configuration read whitelist groups with comma and space"() {
+        given:
+        configuration[ConfigKey.groups.toString()] = 'dev-a, dev-b'
+        expect:
+        schemeProperties.getWhitelistedGroups() containsAll("dev-a", "dev-b")
+    }
+
+    def "configuration read whitelist groups with single entry"() {
+        given:
+        configuration[ConfigKey.groups.toString()] = 'dev-a'
+        expect:
+        schemeProperties.getWhitelistedGroups() containsAll("dev-a")
     }
 
     def "configuration is valid for github preset"() {
