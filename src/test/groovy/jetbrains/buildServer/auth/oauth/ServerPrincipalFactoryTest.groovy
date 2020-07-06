@@ -40,7 +40,7 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "read user from model with existing groups add user group membership"() {
         given:
-        def user = new OAuthUser("testUser", null, null, Arrays.asList("dev-team1", "dev-team2"))
+        def user = new OAuthUser("testUser", null, null, new HashSet(Arrays.asList("dev-team1", "dev-team2")))
         userModel.findUserByUsername(_, _) >> this.teamcityUser
         this.teamcityUser.getUsername() >> user.id
         this.teamcityUser.getUserGroups() >> Arrays.asList(userGroup)
@@ -59,7 +59,7 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "read user from model with existing groups remove user membership"() {
         given:
-        def user = new OAuthUser("testUser", null, null, Arrays.asList())
+        def user = new OAuthUser("testUser", null, null, new HashSet<String>())
         userModel.findUserByUsername(_, _) >> this.teamcityUser
         this.teamcityUser.getUsername() >> user.id
         this.teamcityUser.getUserGroups() >> Arrays.asList(userGroup)
@@ -87,7 +87,7 @@ class ServerPrincipalFactoryTest extends Specification {
     def "read user from model with existing groups add and remove user memberships"() {
         given:
         def user = new OAuthUser("testUser", null, null,
-                Arrays.asList("dev-team2", "dev-team3", "dev-team4", "dev-team5"))
+                new HashSet(Arrays.asList("dev-team2", "dev-team3", "dev-team4", "dev-team5")))
         userModel.findUserByUsername(_, _) >> this.teamcityUser
         this.teamcityUser.getUsername() >> user.id
         UserGroup userGroup2 = Mock()
@@ -163,7 +163,7 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "create user from model without sync of groups"() {
         given:
-        def user = new OAuthUser("testUser", null, null, Arrays.asList("dev-team1", "dev-team2"))
+        def user = new OAuthUser("testUser", null, null, new HashSet(Arrays.asList("dev-team1", "dev-team2")))
         userModel.findUserByUsername(_, _) >> null
         userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) >> teamcityUser
         properties.isSyncGroups() >> false
@@ -179,7 +179,7 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "create user from model with whitelisted groups"() {
         given:
-        def user = new OAuthUser("testUser", null, null, Arrays.asList("dev-team1", "dev-team2"))
+        def user = new OAuthUser("testUser", null, null, new HashSet(Arrays.asList("dev-team1", "dev-team2")))
         userModel.findUserByUsername(_, _) >> null
         userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) >> teamcityUser
         properties.isSyncGroups() >> true
@@ -196,7 +196,7 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "create user from model with whitelisted one group"() {
         given:
-        def user = new OAuthUser("testUser", null, null, Arrays.asList("dev-team1", "dev-team2"))
+        def user = new OAuthUser("testUser", null, null, new HashSet(Arrays.asList("dev-team1", "dev-team2")))
         userModel.findUserByUsername(_, _) >> null
         userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) >> teamcityUser
         properties.isSyncGroups() >> true
@@ -213,7 +213,7 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "create user from model with whitelisted groups and only one is existing in TC"() {
         given:
-        def user = new OAuthUser("testUser", null, null, Arrays.asList("dev-team1", "dev-team2"))
+        def user = new OAuthUser("testUser", null, null, new HashSet(Arrays.asList("dev-team1", "dev-team2")))
         userModel.findUserByUsername(_, _) >> null
         userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) >> teamcityUser
         properties.isSyncGroups() >> true
@@ -230,7 +230,7 @@ class ServerPrincipalFactoryTest extends Specification {
 
     def "create user from model with no whitelisted groups and one is existing in TC"() {
         given:
-        def user = new OAuthUser("testUser", null, null, Arrays.asList("dev-team1", "dev-team2"))
+        def user = new OAuthUser("testUser", null, null, new HashSet(Arrays.asList("dev-team1", "dev-team2")))
         userModel.findUserByUsername(_, _) >> null
         userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.id) >> teamcityUser
         properties.isSyncGroups() >> true

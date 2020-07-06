@@ -136,7 +136,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
             getRequestedSessionId() >> "state"
         }
         client.getAccessToken("code") >> "token"
-        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@example.com", Arrays.asList("dev-"))
+        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@example.com", null)
         properties.getEmailDomains() >> Arrays.asList("example.com")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
@@ -153,7 +153,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
             getRequestedSessionId() >> "state"
         }
         client.getAccessToken("code") >> "token"
-        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@example.com", Arrays.asList("dev-"))
+        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@example.com", null)
         properties.getEmailDomains() >> Arrays.asList("example.com", "@example1.com")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
@@ -170,7 +170,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
             getRequestedSessionId() >> "state"
         }
         client.getAccessToken("code") >> "token"
-        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@acme.com", Arrays.asList("dev-"))
+        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@acme.com", null)
         properties.getEmailDomains() >> Arrays.asList("example.com")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])
@@ -187,7 +187,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
             getRequestedSessionId() >> "state"
         }
         client.getAccessToken("code") >> "token"
-        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@acme.com", Arrays.asList("dev-"))
+        client.getUserData("token") >> new OAuthUser("testUser", "Test User", "test@acme.com", null)
         properties.getEmailDomains() >> Arrays.asList("example.com", "@example1.com")
         when:
         HttpAuthenticationResult result = scheme.processAuthenticationRequest(req, res, [:])

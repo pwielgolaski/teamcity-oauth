@@ -7,6 +7,5 @@
   "is_staff": false,
   "location": null,
   "type": "user",
-  "uuid": "{92fec1df-5d41-472d-a627-1976932cc4aa}",
-  "groups": ["dev"]
+  "uuid": "{92fec1df-5d41-472d-a627-1976932cc4aa}"
 }

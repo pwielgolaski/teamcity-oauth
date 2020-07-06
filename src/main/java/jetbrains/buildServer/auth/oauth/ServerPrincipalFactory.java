@@ -38,19 +38,20 @@ public class ServerPrincipalFactory {
             boolean allowCreatingNewUsersByLogin) {
         Optional<SUser> existingUserOptional = findExistingUser(user.getId());
         boolean syncGroups = properties.isSyncGroups();
-        List<String> groupsInToken = user.getGroups();
+        Set<String> groupsInToken = user.getGroups();
         if (existingUserOptional.isPresent()) {
             LOG.info("Use existing user: " + user.getId());
             SUser existingUser = existingUserOptional.get();
             if (syncGroups) {
                 //user group or all user groups?
-                List<String> existingUserGroups =
+                Set<String> existingUserGroups =
                         existingUser.getUserGroups().stream().map(userGroup -> userGroup.getName())
-                                .collect(Collectors.toList());
-                List<String> additionalGroupsInToken = obtainGroupsDelta(groupsInToken, existingUserGroups);
+                                .collect(Collectors.toSet());
+                Set<String> additionalGroupsInToken = new HashSet<>(groupsInToken);
+                additionalGroupsInToken.removeAll(existingUserGroups);
                 addUserToGroups(existingUser, applyGroupWhitelist(additionalGroupsInToken));
-
-                List<String> groupsNotPresentInToken = obtainGroupsDelta(existingUserGroups, groupsInToken);
+                Set<String> groupsNotPresentInToken = new HashSet<>(existingUserGroups);
+                groupsNotPresentInToken.removeAll(groupsInToken);
                 removeUserFromGroups(existingUser, applyGroupWhitelist(groupsNotPresentInToken));
             }
             return Optional.of(new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, existingUser.getUsername()));
@@ -69,7 +70,7 @@ public class ServerPrincipalFactory {
         }
     }
 
-    private void removeUserFromGroups(SUser existingUser, List<String> groupsToDelete) {
+    private void removeUserFromGroups(SUser existingUser, Set<String> groupsToDelete) {
         for (String group : groupsToDelete) {
             SUserGroup userGroup = userGroupManager.findUserGroupByName(group);
             if (userGroup != null) {
@@ -78,24 +79,24 @@ public class ServerPrincipalFactory {
         }
     }
 
-    private List<String> applyGroupWhitelist(List<String> groups) {
-        List<String> finalGroupList = new ArrayList<>();
+    private Set<String> applyGroupWhitelist(Set<String> groups) {
+        Set<String> finalGroupSet = new HashSet<>();
         Set<String> whitelistedGroups = properties.getWhitelistedGroups();
         if (whitelistedGroups != null) {
             for (String group : groups) {
                 for (String whitelistedGroup : whitelistedGroups) {
                     if (group.startsWith(whitelistedGroup)) {
-                        finalGroupList.add(group);
+                        finalGroupSet.add(group);
                         break;
                     }
                 }
             }
         }
-        return finalGroupList;
+        return finalGroupSet;
     }
 
-    private void addUserToGroups(SUser created, List<String> finalGroupList) {
-        for (String group : finalGroupList) {
+    private void addUserToGroups(SUser created, Set<String> finalGroupSet) {
+        for (String group : finalGroupSet) {
             SUserGroup userGroup = userGroupManager.findUserGroupByName(group);
             if (userGroup != null) {
                 userGroup.addUser(created);
@@ -112,16 +113,5 @@ public class ServerPrincipalFactory {
             // ignore it
             return Optional.empty();
         }
-    }
-
-    private List<String> obtainGroupsDelta(List<String> minuend, List<String> subtrahend) {
-        return minuend.stream()
-                .filter(filterOutEqualValuesCaseInsensitive(subtrahend))
-                .collect(Collectors.toList());
-    }
-
-    private Predicate<String> filterOutEqualValuesCaseInsensitive(Collection<String> valuesToExclude) {
-        return valueUnderTest -> valuesToExclude.stream().map(String::toLowerCase)
-                .noneMatch(s -> s.equals(valueUnderTest.toLowerCase()));
     }
 }
