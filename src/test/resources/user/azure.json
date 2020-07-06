@@ -10,6 +10,5 @@
   "officeLocation": null,
   "preferredLanguage": null,
   "surname": null,
-  "userPrincipalName": "piotr.wielgolaski_example.com#EXT#@any-domain.onmicrosoft.com",
-  "groups": ["dev"]
+  "userPrincipalName": "piotr.wielgolaski_example.com#EXT#@any-domain.onmicrosoft.com"
 }

@@ -2,7 +2,13 @@ package jetbrains.buildServer.auth.oauth;
 
 import org.json.simple.JSONArray;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class OAuthUser {
     private static final String[] IDS_LIST = new String[]{"login", "username", "id", "preferred_username"};
@@ -13,13 +19,13 @@ public class OAuthUser {
     private final String id;
     private final String name;
     private final String email;
-    private final List<String> groups;
+    private final Set<String> groups;
 
     public OAuthUser(String id) {
         this(id, null, null, null);
     }
 
-    public OAuthUser(String id, String name, String email, List<String> groups) {
+    public OAuthUser(String id, String name, String email, Set<String> groups) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -30,8 +36,7 @@ public class OAuthUser {
         this.id = getValueByKeys(userData, IDS_LIST);
         this.name = getValueByKeys(userData, NAMES_LIST);
         this.email = getValueByKeys(userData, EMAIL_LIST);
-        this.groups = getGroups(userData, GROUPS_KEY) == null ? new ArrayList<>() : Arrays.asList(getGroups(userData,
-                GROUPS_KEY));
+        this.groups = parseGroups(userData, GROUPS_KEY);
     }
 
     private String getValueByKeys(Map userData, String[] keys) {
@@ -48,13 +53,13 @@ public class OAuthUser {
         return value;
     }
 
-    private String[] getGroups(Map userData, String key) {
+    private Set<String> parseGroups(Map userData, String key) {
         if (userData == null) {
-            return null;
+            return new HashSet<>();
         }
         Object groupsObject = userData.get(key);
         if (groupsObject == null) {
-            return null;
+            return new HashSet<>();
         }
         JSONArray groupsJsonArray = (JSONArray) groupsObject;
         int groupSize = groupsJsonArray.size();
@@ -62,7 +67,7 @@ public class OAuthUser {
         for (int i = 0; i < groupSize; i++) {
             groupsArray[i] = (String) groupsJsonArray.get(i);
         }
-        return groupsArray;
+        return new HashSet(Arrays.asList(groupsArray));
     }
 
     public String getId() {
@@ -75,6 +80,10 @@ public class OAuthUser {
 
     public String getEmail() {
         return email;
+    }
+
+    public Set<String> getGroups() {
+        return groups;
     }
 
     public void validate(AuthenticationSchemeProperties properties) throws Exception {
@@ -100,9 +109,12 @@ public class OAuthUser {
 
     @Override
     public String toString() {
+        String groupsText = (getGroups() != null && getGroups().size() >0) ?
+                ", groups='" + getGroups().toString() + '\'' : "";
         return "OAuthUser{" + "id='" + getId() + '\'' +
                 ", name='" + getName() + '\'' +
                 ", email='" + getEmail() + '\'' +
+                groupsText +
                 '}';
     }
 
@@ -117,15 +129,12 @@ public class OAuthUser {
         OAuthUser oAuthUser = (OAuthUser) o;
         return Objects.equals(id, oAuthUser.id) &&
                 Objects.equals(name, oAuthUser.name) &&
-                Objects.equals(email, oAuthUser.email);
+                Objects.equals(email, oAuthUser.email) &&
+                Objects.equals(groups, oAuthUser.groups);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email);
-    }
-
-    public List<String> getGroups() {
-        return groups;
+        return Objects.hash(id, name, email, groups);
     }
 }

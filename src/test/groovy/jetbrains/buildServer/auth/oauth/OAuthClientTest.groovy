@@ -88,9 +88,21 @@ class OAuthClientTest extends Specification {
     def "should fetch user data"() {
         setup:
         def token = 'test_token'
+        server.enqueue(new MockResponse().setBody(JSONValue.toJSONString([id: 'user', name: 'userName', email: 'email'])))
+        expect:
+        client.getUserData(token) == new OAuthUser('user', 'userName', 'email', new HashSet<String>())
+        def req = server.takeRequest()
+        req.method == 'GET'
+        req.path == '/user'
+        req.headers.get('Authorization') == 'Bearer ' + token
+    }
+
+    def "should fetch user data with groups"() {
+        setup:
+        def token = 'test_token'
         server.enqueue(new MockResponse().setBody(JSONValue.toJSONString([id: 'user', name: 'userName', email: 'email', groups: ['dev-']])))
         expect:
-        client.getUserData(token) == new OAuthUser('user', 'userName', 'email', Arrays.asList("dev-"))
+        client.getUserData(token) == new OAuthUser('user', 'userName', 'email', new HashSet(Arrays.asList("dev-")))
         def req = server.takeRequest()
         req.method == 'GET'
         req.path == '/user'

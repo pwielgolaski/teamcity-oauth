@@ -1,0 +1,21 @@
+{
+  "sub": "00unddzs1234abcdmO0h7",
+  "name": "Bharath Sekar",
+  "ver": 1,
+  "iss": "https://mycompany.okta.com/oauth2/ausj1ftnbaOabCd2U3h4",
+  "aud": "0oajrcy6439lTEsAB0h7",
+  "iat": 1590611373,
+  "exp": 1590614973,
+  "jti": "ID.9iPRG40sXmFoqKmZG0t83qPpqDjTSnGC3k4pBYSv72Q",
+  "amr": [
+    "otp",
+    "mfa",
+    "pwd"
+  ],
+  "preferred_username": "user@guidewire.com",
+  "auth_time": 1590605665,
+  "at_hash": "T7BDzcPMmBQnyD7UIiLaWg",
+  "groups": [
+    "dev"
+  ]
+}
