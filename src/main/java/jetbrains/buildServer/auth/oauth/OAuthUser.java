@@ -2,13 +2,7 @@ package jetbrains.buildServer.auth.oauth;
 
 import org.json.simple.JSONArray;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class OAuthUser {
     private static final String[] IDS_LIST = new String[]{"login", "username", "id", "preferred_username"};
@@ -102,14 +96,14 @@ public class OAuthUser {
             });
 
             if (!isValid) {
-                throw new Exception("Unauthenticated since user email is not in " + emailDomains.toString());
+                throw new Exception("Unauthenticated since user email is not in " + emailDomains);
             }
         }
     }
 
     @Override
     public String toString() {
-        String groupsText = (getGroups() != null && getGroups().size() >0) ?
+        String groupsText = (getGroups() != null && getGroups().size() > 0) ?
                 ", groups='" + getGroups().toString() + '\'' : "";
         return "OAuthUser{" + "id='" + getId() + '\'' +
                 ", name='" + getName() + '\'' +

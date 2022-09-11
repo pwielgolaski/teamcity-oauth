@@ -6,16 +6,14 @@ import jetbrains.buildServer.serverSide.auth.ServerPrincipal;
 import jetbrains.buildServer.users.InvalidUsernameException;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.users.UserModel;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ServerPrincipalFactory {
-
-    private static final Logger LOG = Logger.getLogger(ServerPrincipalFactory.class);
 
     @NotNull
     private final UserModel userModel;
@@ -27,7 +25,7 @@ public class ServerPrincipalFactory {
     private final AuthenticationSchemeProperties properties;
 
     public ServerPrincipalFactory(@NotNull UserModel userModel, @NotNull UserGroupManager userGroupManager,
-            @NotNull AuthenticationSchemeProperties properties) {
+                                  @NotNull AuthenticationSchemeProperties properties) {
         this.userModel = userModel;
         this.userGroupManager = userGroupManager;
         this.properties = properties;
@@ -35,12 +33,11 @@ public class ServerPrincipalFactory {
 
     @NotNull
     public Optional<ServerPrincipal> getServerPrincipal(@NotNull final OAuthUser user,
-            boolean allowCreatingNewUsersByLogin) {
+                                                        boolean allowCreatingNewUsersByLogin) {
         Optional<SUser> existingUserOptional = findExistingUser(user.getId());
         boolean syncGroups = properties.isSyncGroups();
         Set<String> groupsInToken = user.getGroups();
         if (existingUserOptional.isPresent()) {
-            LOG.info("Use existing user: " + user.getId());
             SUser existingUser = existingUserOptional.get();
             if (syncGroups) {
                 //user group or all user groups?
@@ -56,7 +53,6 @@ public class ServerPrincipalFactory {
             }
             return Optional.of(new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, existingUser.getUsername()));
         } else if (allowCreatingNewUsersByLogin) {
-            LOG.info("Creating user: " + user);
             SUser created = userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.getId());
             if (syncGroups) {
                 addUserToGroups(created, applyGroupWhitelist(groupsInToken));
@@ -65,7 +61,6 @@ public class ServerPrincipalFactory {
             created.updateUserAccount(user.getId(), user.getName(), user.getEmail());
             return Optional.of(new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.getId()));
         } else {
-            LOG.info("User: " + user + " could not be found and allowCreatingNewUsersByLogin is disabled");
             return Optional.empty();
         }
     }

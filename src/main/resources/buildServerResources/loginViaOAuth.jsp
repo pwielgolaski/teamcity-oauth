@@ -19,7 +19,7 @@
     <div>
         <form action="<c:url value='${oauthLoginUrl}'/>" method="GET">
             <input class="btn loginButton" style="margin: auto; display: block" type="submit" name="submitLogin"
-                   value="Log in via oAuth">
+                   value="Log in">
             <c:if test="${oauth2_settings.hideLoginForm and oauth2_settings.guestLoginAllowed}">
                 <div class="oauth-guest-section">
                     <span class="greyNote">

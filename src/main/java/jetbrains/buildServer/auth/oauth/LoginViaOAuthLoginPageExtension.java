@@ -11,7 +11,6 @@ import java.util.Map;
 
 public class LoginViaOAuthLoginPageExtension extends SimplePageExtension {
 
-
     @NotNull
     private final AuthenticationSchemeProperties schemeProperties;
 

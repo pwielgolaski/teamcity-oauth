@@ -1,7 +1,6 @@
 package jetbrains.buildServer.auth.oauth;
 
 import com.intellij.openapi.util.text.StringUtil;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -16,7 +15,6 @@ import java.util.stream.Stream;
 
 public class GithubUser extends OAuthUser {
 
-    private static final Logger log = Logger.getLogger(GithubUser.class);
     public static final String ORGANIZATION_ENDPOINT = "https://api.github.com/user/orgs";
     private final Supplier<String> organizationSupplier;
 
@@ -27,7 +25,6 @@ public class GithubUser extends OAuthUser {
 
     private Set<String> fetchUserOrganizations() {
         String response = organizationSupplier.get();
-        log.debug("Fetched user org data: " + response);
         Object parsedResponse = JSONValue.parse(response);
         if (parsedResponse instanceof JSONArray) {
             return ((List<Object>) parsedResponse)
@@ -46,7 +43,7 @@ public class GithubUser extends OAuthUser {
     @Override
     public void validate(AuthenticationSchemeProperties properties) throws Exception {
         super.validate(properties);
-        // Check the organizations that the user belongs to for Github Oauth
+        // Check the organizations that the user belongs to for GitHub Oauth
         String orgs = properties.getOrganizations();
         if (StringUtil.isNotEmpty(orgs)) {
             Set<String> userOrganizations = this.fetchUserOrganizations();

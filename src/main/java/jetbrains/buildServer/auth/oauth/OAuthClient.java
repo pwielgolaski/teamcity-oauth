@@ -7,7 +7,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONValue;
 import org.springframework.http.MediaType;
@@ -19,7 +18,6 @@ import java.util.Map;
 public class OAuthClient {
 
     private final AuthenticationSchemeProperties properties;
-    private static final Logger log = Logger.getLogger(OAuthClient.class);
     private final Map<Boolean, OkHttpClient> httpClients = new HashMap<>();
 
     public OAuthClient(AuthenticationSchemeProperties properties) {
@@ -65,7 +63,6 @@ public class OAuthClient {
 
     public OAuthUser getUserData(String token) {
         String response = authenticatedGETCall(properties.getUserEndpoint(), token);
-        log.debug("Fetched user data: " + response);
         Map parsedResponse = (Map) JSONValue.parse(response);
         return createUser(token, parsedResponse);
     }

@@ -31,7 +31,6 @@ class HttpClientFactory {
         }
     }
 
-
     private static class AcceptEverythingTrustManager implements X509TrustManager {
         public void checkClientTrusted(X509Certificate[] certificates, String authType) throws CertificateException {
         }

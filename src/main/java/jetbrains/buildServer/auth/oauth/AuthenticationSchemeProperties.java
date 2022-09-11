@@ -96,7 +96,7 @@ public class AuthenticationSchemeProperties {
     }
 
     public boolean isHideLoginForm() {
-        return Boolean.valueOf(getProperty(ConfigKey.hideLoginForm));
+        return Boolean.parseBoolean(getProperty(ConfigKey.hideLoginForm));
     }
 
     public boolean isSchemeConfigured() {

@@ -7,7 +7,6 @@ import jetbrains.buildServer.controllers.interceptors.auth.util.HttpAuthUtil;
 import jetbrains.buildServer.serverSide.auth.AuthModuleUtil;
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatus;
@@ -18,14 +17,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
-
 
 public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
 
-    private static final Logger LOG = Logger.getLogger(OAuthAuthenticationScheme.class);
     private static final boolean DEFAULT_ALLOW_CREATING_NEW_USERS_BY_LOGIN = true;
     public static final String CODE = "code";
     public static final String STATE = "state";
@@ -79,8 +73,6 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         if (StringUtil.isEmpty(code) || StringUtil.isEmpty(state))
             return HttpAuthenticationResult.notApplicable();
 
-        LOG.debug(String.format("oAuth response with code '%s' & state '%s'", code, state));
-
         if (!state.equals(SessionUtil.getSessionId(request)))
             return sendUnauthorizedRequest(request, response, "Unauthenticated since retrieved 'state' doesn't correspond to current TeamCity session.");
 
@@ -100,7 +92,6 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         final Optional<ServerPrincipal> principal = principalFactory.getServerPrincipal(user, allowCreatingNewUsersByLogin);
 
         if (principal.isPresent()) {
-            LOG.debug("Request authenticated. Determined user " + principal.get().getName());
             return HttpAuthenticationResult.authenticated(principal.get(), true)
                     .withRedirect("/");
         } else {
@@ -109,7 +100,6 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
     }
 
     private HttpAuthenticationResult sendUnauthorizedRequest(HttpServletRequest request, HttpServletResponse response, String reason) throws IOException {
-        LOG.warn(reason);
         HttpAuthUtil.setUnauthenticatedReason(request, reason);
         response.sendError(HttpStatus.UNAUTHORIZED.value(), reason);
         return HttpAuthenticationResult.unauthenticated();
