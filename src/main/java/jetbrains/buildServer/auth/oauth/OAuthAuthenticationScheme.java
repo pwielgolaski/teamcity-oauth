@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -73,7 +76,15 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
         if (StringUtil.isEmpty(code) || StringUtil.isEmpty(state))
             return HttpAuthenticationResult.notApplicable();
 
-        if (!state.equals(SessionUtil.getSessionId(request)))
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        String sessionId = SessionUtil.getSessionId(request);
+        String sessionIdHash = new String(digest.digest(sessionId.getBytes(StandardCharsets.UTF_8)));
+        if (!state.equals(sessionIdHash))
             return sendUnauthorizedRequest(request, response, "Unauthenticated since retrieved 'state' doesn't correspond to current TeamCity session.");
 
         String token = authClient.getAccessToken(code);

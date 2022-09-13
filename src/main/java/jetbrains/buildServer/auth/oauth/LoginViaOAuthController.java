@@ -9,6 +9,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
 public class LoginViaOAuthController extends BaseController {
 
@@ -30,7 +32,9 @@ public class LoginViaOAuthController extends BaseController {
         if (!schemeProperties.isSchemeConfigured()) {
             return null;
         }
-        String state = SessionUtil.getSessionId(request);
-        return new ModelAndView(new RedirectView(authClient.getRedirectUrl(state)));
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        String sessionId = SessionUtil.getSessionId(request);
+        String sessionIdHash = new String(digest.digest(sessionId.getBytes(StandardCharsets.UTF_8)));
+        return new ModelAndView(new RedirectView(authClient.getRedirectUrl(sessionIdHash)));
     }
 }
