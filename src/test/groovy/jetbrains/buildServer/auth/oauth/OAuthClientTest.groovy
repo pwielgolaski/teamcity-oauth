@@ -65,9 +65,9 @@ class OAuthClientTest extends Specification {
         query['redirect_uri'] == ROOT_URL
         where:
         scope           || expectedScope
-        ""              || null
-        "scope1"        || "scope1"
-        "scope1 scope2" || "scope1%20scope2"
+        ""              || "openid"
+        "scope1"        || "openid%20scope1"
+        "scope1 scope2" || "openid%20scope1%20scope2"
     }
 
     def "should fetch token data"() {
