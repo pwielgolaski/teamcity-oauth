@@ -31,15 +31,15 @@ public class OAuthClient {
     }
 
     public String getRedirectUrl(String state) {
+        String scopes = StringUtil.isEmpty(properties.getScope()) ? "openid" : "openid " + properties.getScope();
+
         HttpUrl.Builder builder = HttpUrl.parse(properties.getAuthorizeEndpoint())
                 .newBuilder()
                 .addQueryParameter("response_type", "code")
                 .addQueryParameter("client_id", properties.getClientId())
                 .addQueryParameter("state", state)
+                .addQueryParameter("scope", scopes)
                 .addQueryParameter("redirect_uri", properties.getRootUrl());
-        if (StringUtil.isNotEmpty(properties.getScope())) {
-            builder.addQueryParameter("scope", properties.getScope());
-        }
         return builder.build().toString();
 
     }
