@@ -8,6 +8,7 @@ public enum ConfigKey {
     userEndpoint,
     clientId,
     clientSecret,
+    customName,
     scope,
     hideLoginForm,
     allowInsecureHttps,

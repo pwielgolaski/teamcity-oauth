@@ -52,6 +52,15 @@ public class AuthenticationSchemeProperties {
     }
 
     @Nullable
+    public String getCustomName() {
+        String customName = getProperty(ConfigKey.customName);
+        if (StringUtil.isEmpty(customName)) {
+            customName = "OAuth";
+        }
+        return customName;
+    }
+
+    @Nullable
     public String getClientId() {
         return getProperty(ConfigKey.clientId);
     }
