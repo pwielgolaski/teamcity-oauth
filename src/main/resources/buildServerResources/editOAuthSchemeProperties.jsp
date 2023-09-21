@@ -90,6 +90,11 @@
         <prop:textProperty style="width: 100%;" name="<%=ConfigKey.userEndpoint.toString()%>"/><br/>
         <span class="grayNote">Endpoint at which TeamCity server can obtain information about user</span>
     </div>
+    <div>
+        <label for="<%=ConfigKey.customName%>">OAuth 2.0 custom name:</label><br/>
+        <prop:textProperty style="width: 100%;" name="<%=ConfigKey.customName.toString()%>"/><br/>
+        <span class="grayNote">OAuth server name that will show in TeamCity login page.</span>
+    </div>
 </div>
 <div>
     <label for="<%=ConfigKey.clientId%>">Client ID:</label><br/>

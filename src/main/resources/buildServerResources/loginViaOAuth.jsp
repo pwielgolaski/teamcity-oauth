@@ -5,7 +5,7 @@
 </c:set>
 <c:if test="${oauth2_settings.schemeConfigured}">
     <c:if test="${oauth2_settings.hideLoginForm}">
-        <style>
+        <style type="text/css">
             .loginForm {
                 display: none;
             }
@@ -16,10 +16,16 @@
             }
         </style>
     </c:if>
+    <style type="text/css">
+        .oauthForm .btn.loginButton {
+            margin: auto;
+            display: block;
+        }
+    </style>
     <div>
-        <form action="<c:url value='${oauthLoginUrl}'/>" method="GET">
-            <input class="btn loginButton" style="margin: auto; display: block" type="submit" name="submitLogin"
-                   value="Log in via oAuth">
+        <form class="oauthForm" action="<c:url value='${oauthLoginUrl}'/>" method="GET">
+            <input class="btn loginButton" type="submit" name="submitLogin"
+                   value="Log in via ${oauth2_settings.customName}">
             <c:if test="${oauth2_settings.hideLoginForm and oauth2_settings.guestLoginAllowed}">
                 <div class="oauth-guest-section">
                     <span class="greyNote">
